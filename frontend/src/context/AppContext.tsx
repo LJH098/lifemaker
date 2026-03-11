@@ -1,6 +1,15 @@
 import { createContext, ReactNode, useContext, useEffect, useState } from "react";
 import { api, extractApiError } from "../services/api";
-import { AuthPayload, CompleteQuestPayload, GeneratePlanPayload, PurchaseItemPayload, Quest, ShopItem, User } from "../types";
+import {
+  AuthPayload,
+  CompleteQuestPayload,
+  GeneratePlanPayload,
+  PurchaseItemPayload,
+  Quest,
+  RoomUpdatePayload,
+  ShopItem,
+  User
+} from "../types";
 
 type SignupInput = {
   nickname: string;
@@ -33,6 +42,10 @@ type AppContextValue = {
   logout: () => void;
   refreshSession: () => Promise<void>;
   updateAvatar: (input: AvatarInput) => Promise<User>;
+  updateRoom: (input: RoomUpdatePayload) => Promise<User>;
+  addGuestbookEntry: (message: string) => Promise<User>;
+  fetchRoomByInvite: (inviteCode: string) => Promise<User>;
+  addGuestbookEntryToRoom: (inviteCode: string, message: string) => Promise<User>;
   generatePlan: (goal: string, currentSituation: string) => Promise<GeneratePlanPayload>;
   completeQuest: (questId: string) => Promise<CompleteQuestPayload>;
   loadShopItems: () => Promise<void>;
@@ -123,6 +136,44 @@ export function AppProvider({ children }: { children: ReactNode }) {
     }
   };
 
+  const updateRoom = async (input: RoomUpdatePayload) => {
+    try {
+      const response = await api.put<User>("/users/room", input);
+      setUser(response.data);
+      return response.data;
+    } catch (error) {
+      throw new Error(extractApiError(error));
+    }
+  };
+
+  const addGuestbookEntry = async (message: string) => {
+    try {
+      const response = await api.post<User>("/users/room/guestbook", { message });
+      setUser(response.data);
+      return response.data;
+    } catch (error) {
+      throw new Error(extractApiError(error));
+    }
+  };
+
+  const fetchRoomByInvite = async (inviteCode: string) => {
+    try {
+      const response = await api.get<User>(`/users/room/by-invite/${inviteCode}`);
+      return response.data;
+    } catch (error) {
+      throw new Error(extractApiError(error));
+    }
+  };
+
+  const addGuestbookEntryToRoom = async (inviteCode: string, message: string) => {
+    try {
+      const response = await api.post<User>(`/users/room/${inviteCode}/guestbook`, { message });
+      return response.data;
+    } catch (error) {
+      throw new Error(extractApiError(error));
+    }
+  };
+
   const generatePlan = async (goal: string, currentSituation: string) => {
     try {
       const response = await api.post<GeneratePlanPayload>("/ai/generate-plan", { goal, currentSituation });
@@ -184,6 +235,10 @@ export function AppProvider({ children }: { children: ReactNode }) {
         logout,
         refreshSession,
         updateAvatar,
+        updateRoom,
+        addGuestbookEntry,
+        fetchRoomByInvite,
+        addGuestbookEntryToRoom,
         generatePlan,
         completeQuest,
         loadShopItems,

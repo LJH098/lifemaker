@@ -37,17 +37,29 @@ public record UserResponse(
     public record RoomResponse(
         String title,
         boolean isPublic,
+        boolean allowGuestbook,
+        boolean restMode,
         String wallTheme,
         String floorTheme,
-        List<PlacedItemResponse> placements
+        String moodMessage,
+        String inviteCode,
+        List<PlacedItemResponse> placements,
+        List<GuestbookEntryResponse> guestbookEntries,
+        List<ActivityEntryResponse> activityEntries
     ) {
         static RoomResponse from(RoomState roomState) {
             return new RoomResponse(
                 roomState.getTitle(),
                 roomState.isPublic(),
+                roomState.isAllowGuestbook(),
+                roomState.isRestMode(),
                 roomState.getWallTheme(),
                 roomState.getFloorTheme(),
-                roomState.getPlacements().stream().map(PlacedItemResponse::from).toList()
+                roomState.getMoodMessage(),
+                roomState.getInviteCode(),
+                roomState.getPlacements().stream().map(PlacedItemResponse::from).toList(),
+                roomState.getGuestbookEntries().stream().map(GuestbookEntryResponse::from).toList(),
+                roomState.getActivityEntries().stream().map(ActivityEntryResponse::from).toList()
             );
         }
     }
@@ -60,6 +72,28 @@ public record UserResponse(
     ) {
         static PlacedItemResponse from(RoomState.PlacedItem item) {
             return new PlacedItemResponse(item.getItemId(), item.getX(), item.getY(), item.getLayer());
+        }
+    }
+
+    public record GuestbookEntryResponse(
+        String id,
+        String author,
+        String message,
+        String createdAt
+    ) {
+        static GuestbookEntryResponse from(RoomState.GuestbookEntry entry) {
+            return new GuestbookEntryResponse(entry.getId(), entry.getAuthor(), entry.getMessage(), entry.getCreatedAt());
+        }
+    }
+
+    public record ActivityEntryResponse(
+        String id,
+        String actor,
+        String message,
+        String createdAt
+    ) {
+        static ActivityEntryResponse from(RoomState.ActivityEntry entry) {
+            return new ActivityEntryResponse(entry.getId(), entry.getActor(), entry.getMessage(), entry.getCreatedAt());
         }
     }
 

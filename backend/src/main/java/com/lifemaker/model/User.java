@@ -38,7 +38,7 @@ public class User {
         this.avatar = Avatar.starter();
         this.stats = UserStats.starter();
         this.ownedItemIds = new ArrayList<>(List.of("i-3", "i-5", "i-6"));
-        this.room = RoomState.starter(nickname);
+        this.room = RoomState.starter(nickname, "room-" + id.substring(0, Math.min(8, id.length())));
     }
 
     public String getId() {
@@ -126,7 +126,9 @@ public class User {
 
     public RoomState getRoom() {
         if (room == null) {
-            room = RoomState.starter(nickname == null ? "LifeMaker" : nickname);
+            String roomNickname = nickname == null ? "LifeMaker" : nickname;
+            String inviteCode = id == null ? "room-lifemaker" : "room-" + id.substring(0, Math.min(8, id.length()));
+            room = RoomState.starter(roomNickname, inviteCode);
         }
         return room;
     }

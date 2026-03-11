@@ -2,22 +2,27 @@ package com.lifemaker.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 
 import java.util.List;
 
 public record RoomUpdateRequest(
-    @NotBlank(message = "방 제목을 입력해 주세요.")
+    @NotBlank(message = "Room title is required.")
     String title,
     boolean isPublic,
-    @NotBlank(message = "벽 테마를 선택해 주세요.")
+    boolean allowGuestbook,
+    boolean restMode,
+    @NotBlank(message = "Wall theme is required.")
     String wallTheme,
-    @NotBlank(message = "바닥 테마를 선택해 주세요.")
+    @NotBlank(message = "Floor theme is required.")
     String floorTheme,
-    @NotNull(message = "배치 정보가 필요합니다.")
+    @Size(max = 120, message = "Mood message must be 120 characters or fewer.")
+    String moodMessage,
+    @NotNull(message = "Placement data is required.")
     List<PlacementRequest> placements
 ) {
     public record PlacementRequest(
-        @NotBlank(message = "아이템 ID가 필요합니다.")
+        @NotBlank(message = "Item ID is required.")
         String itemId,
         int x,
         int y,
