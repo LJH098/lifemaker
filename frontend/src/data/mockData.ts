@@ -7,7 +7,24 @@ export const mockUser: User = {
   level: 7,
   exp: 640,
   coins: 1280,
-  ownedItemIds: ["i-4"],
+  ownedItemIds: ["i-3", "i-4", "i-5", "i-6"],
+  room: {
+    title: "QuestRunner's Mini Room",
+    isPublic: true,
+    allowGuestbook: true,
+    restMode: true,
+    wallTheme: "mint",
+    floorTheme: "wood",
+    moodMessage: "Welcome to my room.",
+    inviteCode: "room-u-1",
+    placements: [
+      { itemId: "i-3", x: 72, y: 46, layer: 2 },
+      { itemId: "i-5", x: 24, y: 74, layer: 1 },
+      { itemId: "i-6", x: 64, y: 80, layer: 0 }
+    ],
+    guestbookEntries: [],
+    activityEntries: [{ id: "a-1", actor: "System", message: "Room created", createdAt: "Just now" }]
+  },
   avatar: {
     hair: "Cyber Cut",
     clothes: "Explorer Jacket",
@@ -67,7 +84,9 @@ export const mockItems: ShopItem[] = [
   { itemId: "i-1", name: "Pixel Blade Hair", type: "hair", price: 280, image: "PX" },
   { itemId: "i-2", name: "Guild Hoodie", type: "clothes", price: 420, image: "HD" },
   { itemId: "i-3", name: "Focus Lamp", type: "room_furniture", price: 360, image: "LP" },
-  { itemId: "i-4", name: "Legend Pin", type: "accessories", price: 150, image: "PN" }
+  { itemId: "i-4", name: "Legend Pin", type: "accessories", price: 150, image: "PN" },
+  { itemId: "i-5", name: "Mini Plant", type: "room_furniture", price: 180, image: "PL" },
+  { itemId: "i-6", name: "Cloud Bed", type: "room_furniture", price: 520, image: "BD" }
 ];
 
 export const mockChat: ChatMessage[] = [

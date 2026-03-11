@@ -17,6 +17,41 @@ export type Avatar = {
   };
 };
 
+export type RoomPlacement = {
+  itemId: string;
+  x: number;
+  y: number;
+  layer: number;
+};
+
+export type RoomGuestbookEntry = {
+  id: string;
+  author: string;
+  message: string;
+  createdAt: string;
+};
+
+export type RoomActivityEntry = {
+  id: string;
+  actor: string;
+  message: string;
+  createdAt: string;
+};
+
+export type RoomState = {
+  title: string;
+  isPublic: boolean;
+  allowGuestbook: boolean;
+  restMode: boolean;
+  wallTheme: string;
+  floorTheme: string;
+  moodMessage: string;
+  inviteCode: string;
+  placements: RoomPlacement[];
+  guestbookEntries: RoomGuestbookEntry[];
+  activityEntries: RoomActivityEntry[];
+};
+
 export type User = {
   id: string;
   email: string;
@@ -25,6 +60,7 @@ export type User = {
   exp: number;
   coins: number;
   ownedItemIds: string[];
+  room: RoomState;
   avatar: Avatar;
   stats: UserStats;
 };
@@ -85,4 +121,15 @@ export type CompleteQuestPayload = {
 export type PurchaseItemPayload = {
   itemId: string;
   user: User;
+};
+
+export type RoomUpdatePayload = {
+  title: string;
+  isPublic: boolean;
+  allowGuestbook: boolean;
+  restMode: boolean;
+  wallTheme: string;
+  floorTheme: string;
+  moodMessage: string;
+  placements: RoomPlacement[];
 };
