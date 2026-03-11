@@ -56,6 +56,52 @@ export type ChatMessage = {
   sentAt: string;
 };
 
+export type PlazaDirection = "up" | "down" | "left" | "right";
+
+export type PlazaParticipant = {
+  userId: string;
+  nickname: string;
+  level: number;
+  avatar: Avatar;
+  x: number;
+  y: number;
+  direction: PlazaDirection;
+  moving: boolean;
+};
+
+export type PlazaJoinCommand = {
+  plazaId: string;
+};
+
+export type PlazaMoveCommand = {
+  plazaId: string;
+  x: number;
+  y: number;
+  direction: PlazaDirection;
+  moving: boolean;
+  seq: number;
+};
+
+export type PlazaChatCommand = {
+  plazaId: string;
+  content: string;
+};
+
+export type PlazaSnapshot = {
+  plazaId: string;
+  participants: PlazaParticipant[];
+};
+
+export type PlazaEvent = {
+  type: "joined" | "moved" | "chatted" | "left";
+  plazaId: string;
+  participant: PlazaParticipant | null;
+  userId: string | null;
+  content: string | null;
+  sentAt: string | null;
+  seq: number | null;
+};
+
 export type AuthPayload = {
   token: string;
   user: User;
