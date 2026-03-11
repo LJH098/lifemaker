@@ -1,5 +1,6 @@
 import { Bell, Coins, Home, LogOut, ScrollText, Sparkles, User, Users } from "lucide-react";
 import { NavLink, Outlet, useNavigate } from "react-router-dom";
+import { AvatarPreview3D } from "./AvatarPreview3D";
 import { useApp } from "../context/AppContext";
 
 const navItems = [
@@ -77,41 +78,35 @@ export function Layout() {
         <aside className="order-2 grid-panel border-b border-white/50 liquid-panel-soft p-5 backdrop-blur xl:order-none xl:border-b-0 xl:border-r">
           <div className="rounded-[30px] liquid-panel p-5">
             <div className="rounded-[28px] liquid-panel-soft p-4">
-              <div className="flex items-center gap-4">
-                <div className="shrink-0 text-center">
-                  <div
-                    className="mx-auto flex h-20 w-20 items-center justify-center rounded-full shadow-[inset_0_-8px_18px_rgba(0,0,0,0.06)]"
-                    style={{ backgroundColor: user.avatar.colors.skin }}
-                  >
-                    <div
-                      className="h-14 w-14 rounded-full shadow-[inset_0_-8px_18px_rgba(0,0,0,0.08)]"
-                      style={{ backgroundColor: user.avatar.colors.hair }}
+              <div className="flex items-start gap-3">
+                <div className="flex h-[156px] w-[112px] shrink-0 items-start justify-center overflow-visible rounded-[24px] bg-white/30 px-1 pt-3">
+                  <div className="origin-top scale-[0.31]">
+                    <AvatarPreview3D
+                      nickname={user.nickname}
+                      hair={user.avatar.hair}
+                      clothes={user.avatar.clothes}
+                      accessories={user.avatar.accessories}
+                      skinColor={user.avatar.colors.skin}
+                      hairColor={user.avatar.colors.hair}
+                      clothesColor={user.avatar.colors.clothes}
+                      showCaption={false}
+                      spinDurationSeconds={28}
                     />
                   </div>
-                  <div
-                    className="mx-auto mt-3 h-24 w-16 rounded-t-[28px] shadow-[inset_0_-10px_20px_rgba(0,0,0,0.08)]"
-                    style={{ backgroundColor: user.avatar.colors.clothes }}
-                  />
                 </div>
-                <div className="min-w-0 flex-1">
+                <div className="min-w-0 flex-1 pt-1">
                   <p className="text-xl font-semibold text-ink">{user.nickname}</p>
                   <p className="mt-1 text-sm text-sky-500">Lv.{user.level} · {primaryStatLabel} 중심</p>
                   <p className="mt-1 text-sm text-slate-600">다음 레벨까지 {Math.max(currentLevelFloor + 300 - user.exp, 0)} EXP</p>
                   <div className="mt-3 h-2 rounded-full bg-white/60">
                     <div className="h-2 rounded-full bg-accent" style={{ width: `${expProgress}%` }} />
                   </div>
-                  <div className="mt-3 flex items-center gap-2 text-sm text-reward">
+                  <div className="mt-3 flex items-center gap-2 text-sm text-[#d6a63a]">
                     <Coins size={14} />
                     <span>{user.coins} 보유</span>
                   </div>
-                  <div className="mt-3 flex flex-wrap gap-2 text-xs text-slate-600">
-                    <span className="rounded-full liquid-chip px-3 py-2">{user.avatar.hair}</span>
-                    <span className="rounded-full liquid-chip px-3 py-2">{user.avatar.clothes}</span>
-                  </div>
                 </div>
               </div>
-
-              <p className="mt-4 text-sm leading-relaxed text-slate-600">{user.avatar.accessories.join(", ") || "액세서리 없음"}</p>
 
               <div className="mt-4 grid gap-2 text-sm sm:grid-cols-2">
                 {Object.entries(user.stats).map(([key, value]) => (

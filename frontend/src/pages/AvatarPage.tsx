@@ -1,4 +1,5 @@
 import { FormEvent, useEffect, useState } from "react";
+import { AvatarPreview3D } from "../components/AvatarPreview3D";
 import { useApp } from "../context/AppContext";
 import { mockItems } from "../data/mockData";
 
@@ -74,13 +75,17 @@ export function AvatarPage() {
             </div>
           </div>
           <div className="mt-6 flex min-h-[420px] items-center justify-center rounded-[28px] liquid-panel-soft">
-            <div className="text-center">
-              <div className="mx-auto flex h-28 w-28 items-center justify-center rounded-full" style={{ backgroundColor: skinColor }}>
-                <div className="h-20 w-20 rounded-full" style={{ backgroundColor: hairColor }} />
-              </div>
-              <div className="mx-auto mt-4 h-40 w-28 rounded-t-[40px]" style={{ backgroundColor: clothesColor }} />
-              <p className="mt-4 text-lg font-semibold text-ink">{user.nickname}</p>
-              <p className="mt-2 text-sm text-slate-600">{accessories.join(", ") || "액세서리 없음"}</p>
+            <div className="w-full max-w-md px-4 py-6">
+              <AvatarPreview3D
+                nickname={user.nickname}
+                hair={hair}
+                clothes={clothes}
+                accessories={accessories}
+                skinColor={skinColor}
+                hairColor={hairColor}
+                clothesColor={clothesColor}
+              />
+              <p className="mt-4 text-center text-sm text-slate-600">{accessories.join(", ") || "액세서리 없음"}</p>
               <div className="mt-5 grid grid-cols-2 gap-3 text-left text-xs text-slate-600">
                 <div className="rounded-2xl bg-white/35 px-4 py-3">Hair: {hair}</div>
                 <div className="rounded-2xl bg-white/35 px-4 py-3">Clothes: {clothes}</div>
