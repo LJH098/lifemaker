@@ -3,6 +3,8 @@ package com.lifemaker.dto;
 import java.util.List;
 
 public record GeneratePlanResponse(
+    String source,
+    String sourceReason,
     AnalysisSummary analysis,
     List<QuestResponse> quests
 ) {

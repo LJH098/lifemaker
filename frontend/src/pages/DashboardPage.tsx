@@ -1,8 +1,8 @@
+import { useState } from "react";
 import { Sparkles, Target, Trophy, UserRound } from "lucide-react";
 import { Link } from "react-router-dom";
 import { QuestCard } from "../components/QuestCard";
 import { useApp } from "../context/AppContext";
-import { useState } from "react";
 
 export function DashboardPage() {
   const { user, quests, completeQuest } = useApp();
@@ -51,7 +51,7 @@ export function DashboardPage() {
               </div>
               <div className="min-w-0 flex-1">
                 <p className="text-xl font-semibold text-ink">{user.nickname}</p>
-                <p className="mt-1 text-sm text-slate-600">Lv.{user.level} · {primaryStatLabel} 중심</p>
+                <p className="mt-1 text-sm text-slate-600">Lv.{user.level} · {primaryStatLabel} 집중 성장</p>
                 <div className="mt-3 flex flex-wrap gap-2 text-xs text-slate-600">
                   <span className="rounded-full liquid-chip px-3 py-2">{user.avatar.hair}</span>
                   <span className="rounded-full liquid-chip px-3 py-2">{user.avatar.clothes}</span>
@@ -80,7 +80,7 @@ export function DashboardPage() {
             <div>
               <p className="text-sm uppercase tracking-[0.32em] text-accent">Today&apos;s Run</p>
               <p className="mt-3 max-w-2xl text-base leading-relaxed text-slate-600">
-                오늘 해야 할 퀘스트와 성장 흐름을 한 번에 확인하세요. 작은 행동이 쌓일수록 캐릭터도 같이 성장합니다.
+                오늘 해야 할 퀘스트와 성장 흐름을 한 번에 확인하세요. 작은 행동 하나도 캐릭터 성장과 바로 연결됩니다.
               </p>
             </div>
             <Link to="/ai-quests" className="inline-flex items-center gap-3 rounded-2xl bg-accent px-4 py-3 font-semibold text-[#35516a]">
@@ -101,10 +101,10 @@ export function DashboardPage() {
             <div className="rounded-[28px] liquid-panel-soft p-5">
               <div className="flex items-center gap-2 text-reward">
                 <Trophy size={16} />
-                완료 누적
+                완료 기록
               </div>
               <p className="mt-3 text-3xl font-bold text-ink">{completedCount}</p>
-              <p className="mt-2 text-sm text-slate-600">지금까지 보상 획득한 퀘스트 수</p>
+              <p className="mt-2 text-sm text-slate-600">지금까지 보상을 획득한 퀘스트 수</p>
             </div>
             <div className="rounded-[28px] liquid-panel-soft p-5">
               <div className="flex items-center gap-2 text-sky-400">
@@ -129,9 +129,9 @@ export function DashboardPage() {
             </div>
             <div className="rounded-[28px] liquid-panel-soft p-5">
               <p className="text-xs uppercase tracking-[0.28em] text-slate-500">Today summary</p>
-              <p className="mt-2 text-xl font-semibold text-ink">오늘은 {inProgressQuests.length}개의 퀘스트를 진행합니다.</p>
+              <p className="mt-2 text-xl font-semibold text-ink">오늘은 {inProgressQuests.length}개의 퀘스트가 진행 중입니다.</p>
               <p className="mt-3 text-sm leading-relaxed text-slate-600">
-                완료 누적 {completedCount}개, 다음 레벨까지 {expToNextLevel} EXP가 남아 있습니다. 우선순위 퀘스트부터 차례대로 처리하면 됩니다.
+                완료 기록 {completedCount}개, 다음 레벨까지 {expToNextLevel} EXP가 남아 있습니다. 우선순위가 높은 퀘스트부터 차례대로 처리해 보세요.
               </p>
             </div>
           </div>
@@ -143,7 +143,7 @@ export function DashboardPage() {
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div>
               <h2 className="font-display text-2xl text-ink">오늘의 퀘스트 보드</h2>
-              <p className="mt-2 text-sm text-slate-600">핵심 퀘스트를 처리하고 바로 보상과 레벨업 흐름으로 연결하세요.</p>
+              <p className="mt-2 text-sm text-slate-600">활성 퀘스트를 처리하고 바로 보상과 레벨업 흐름으로 연결해 보세요.</p>
             </div>
             <Link to="/quests" className="rounded-2xl border border-white/45 px-4 py-2 text-sm text-slate-600 transition hover:bg-white/35 hover:text-ink">
               전체 보기
@@ -156,7 +156,7 @@ export function DashboardPage() {
                 <div className="my-auto">
                   <p className="text-sm uppercase tracking-[0.28em] text-accent">Quest queue is empty</p>
                   <p className="mt-3 text-2xl font-semibold text-ink">아직 진행 중인 퀘스트가 없습니다.</p>
-                  <p className="mt-3 max-w-xl text-sm leading-relaxed text-slate-600">AI 분석에서 새 퀘스트를 생성하면 이 보드에 오늘의 핵심 액션들이 채워집니다.</p>
+                  <p className="mt-3 max-w-xl text-sm leading-relaxed text-slate-600">AI 분석에서 새 퀘스트를 생성하면 이 보드에 오늘의 액션들이 채워집니다.</p>
                   <div className="mt-5">
                     <Link to="/ai-quests" className="inline-flex items-center gap-2 rounded-2xl bg-accent px-4 py-3 font-semibold text-[#35516a]">
                       <Sparkles size={16} />
@@ -166,9 +166,7 @@ export function DashboardPage() {
                 </div>
               </div>
             ) : (
-              inProgressQuests.slice(0, 3).map((quest) => (
-                <QuestCard key={quest.id} quest={quest} onComplete={handleComplete} busy={busyQuestId === quest.id} />
-              ))
+              inProgressQuests.slice(0, 3).map((quest) => <QuestCard key={quest.id} quest={quest} onComplete={handleComplete} busy={busyQuestId === quest.id} />)
             )}
           </div>
         </div>
@@ -180,8 +178,8 @@ export function DashboardPage() {
               <span className="rounded-full bg-accent/15 px-3 py-1 text-xs font-semibold text-accent">AI 추천</span>
             </div>
             <div className="mt-5 rounded-[30px] liquid-panel-soft p-5">
-              <p className="text-lg font-semibold text-ink">{inProgressQuests[0]?.title ?? "목표를 입력하고 첫 퀘스트를 생성하세요."}</p>
-              <p className="mt-3 text-sm leading-relaxed text-slate-600">{inProgressQuests[0]?.description ?? "현재 상황 분석을 기반으로 AI가 바로 퀘스트를 설계해줍니다."}</p>
+              <p className="text-lg font-semibold text-ink">{inProgressQuests[0]?.title ?? "목표를 입력하고 첫 퀘스트를 생성해 보세요."}</p>
+              <p className="mt-3 text-sm leading-relaxed text-slate-600">{inProgressQuests[0]?.description ?? "현재 상황 분석을 기반으로 AI가 바로 실천 가능한 퀘스트를 추천해 줍니다."}</p>
             </div>
           </div>
 
@@ -194,7 +192,7 @@ export function DashboardPage() {
               </div>
               <div className="rounded-[24px] liquid-panel-soft p-4">
                 <p className="text-sm text-slate-500">레벨업 안내</p>
-                <p className="mt-2 text-sm leading-relaxed text-slate-600">다음 300 EXP 단위마다 레벨업이 발생합니다. 지금은 {expToNextLevel} EXP만 더 쌓으면 다음 단계로 이동합니다.</p>
+                <p className="mt-2 text-sm leading-relaxed text-slate-600">다음 300 EXP 단위마다 레벨업이 발생합니다. 지금은 {expToNextLevel} EXP만 더 모으면 다음 단계로 이동합니다.</p>
               </div>
             </div>
           </div>

@@ -7,6 +7,7 @@ export const mockUser: User = {
   level: 7,
   exp: 640,
   coins: 1280,
+  ownedItemIds: ["i-4"],
   avatar: {
     hair: "Cyber Cut",
     clothes: "Explorer Jacket",
@@ -30,7 +31,7 @@ export const mockQuests: Quest[] = [
   {
     id: "q-1",
     title: "알고리즘 1문제 정복",
-    description: "백준 또는 LeetCode에서 오늘의 핵심 문제 1개를 해결하세요.",
+    description: "백준 또는 LeetCode에서 오늘의 문제 1개를 해결해 보세요.",
     rewardExp: 80,
     rewardCoin: 120,
     status: "in-progress",
@@ -41,7 +42,7 @@ export const mockQuests: Quest[] = [
   {
     id: "q-2",
     title: "2시간 집중 코딩",
-    description: "방해 요소를 끄고 포모도로 4세션을 완료하세요.",
+    description: "방해 요소를 끄고 뽀모도로 4세션을 완료해 보세요.",
     rewardExp: 120,
     rewardCoin: 180,
     status: "in-progress",
@@ -52,7 +53,7 @@ export const mockQuests: Quest[] = [
   {
     id: "q-3",
     title: "개발 강의 복습",
-    description: "React 또는 Spring Boot 강의 30분을 보고 핵심 3줄 요약을 남기세요.",
+    description: "React 또는 Spring Boot 강의를 30분 보고 핵심 3줄을 요약해 보세요.",
     rewardExp: 60,
     rewardCoin: 90,
     status: "completed",
@@ -71,15 +72,9 @@ export const mockItems: ShopItem[] = [
 
 export const mockChat: ChatMessage[] = [
   {
-    senderNickname: "FlowMage",
-    content: "오늘 집중 퀘스트 같이 돌 사람?",
+    senderNickname: "System",
+    content: "광장 채팅에 연결되었습니다. 오늘의 목표를 가볍게 공유해 보세요.",
     roomId: "plaza",
-    sentAt: "09:15"
-  },
-  {
-    senderNickname: "QuestRunner",
-    content: "저요. 알고리즘 퀘스트 끝내고 갈게요.",
-    roomId: "plaza",
-    sentAt: "09:16"
+    sentAt: "Now"
   }
 ];

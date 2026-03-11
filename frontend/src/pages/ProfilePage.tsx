@@ -16,7 +16,7 @@ export function ProfilePage() {
           <div className="rounded-2xl liquid-panel-soft p-4">Level {user.level}</div>
           <div className="rounded-2xl liquid-panel-soft p-4">{user.coins} Coins</div>
           <div className="rounded-2xl liquid-panel-soft p-4">{user.exp} EXP</div>
-          <div className="rounded-2xl liquid-panel-soft p-4">총 퀘스트 {quests.length}개</div>
+          <div className="rounded-2xl liquid-panel-soft p-4">총 퀘스트 수 {quests.length}개</div>
         </div>
       </section>
       <section className="rounded-[32px] liquid-panel p-6">
