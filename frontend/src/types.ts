@@ -50,10 +50,16 @@ export type ShopItem = {
 };
 
 export type ChatMessage = {
+  type?: "CHAT" | "PRESENCE" | "PRESENCE_SYNC" | "MOVE" | "LEAVE";
+  senderId?: string;
+  targetUserId?: string;
   senderNickname: string;
   content: string;
   roomId: string;
   sentAt: string;
+  avatarX?: number;
+  avatarY?: number;
+  avatarPalette?: string;
 };
 
 export type AuthPayload = {
