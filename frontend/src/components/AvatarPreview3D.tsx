@@ -10,6 +10,8 @@ type AvatarPreview3DProps = {
   clothesColor: string;
   showCaption?: boolean;
   spinDurationSeconds?: number;
+  characterScale?: number;
+  verticalOffset?: number;
 };
 
 type BoxProps = {
@@ -116,7 +118,9 @@ export function AvatarPreview3D({
   hairColor,
   clothesColor,
   showCaption = true,
-  spinDurationSeconds = 16
+  spinDurationSeconds = 16,
+  characterScale = 1,
+  verticalOffset = 0
 }: AvatarPreview3DProps) {
   const skinSide = shadeHexColor(skinColor, -18);
   const skinTop = shadeHexColor(skinColor, 12);
@@ -136,7 +140,16 @@ export function AvatarPreview3D({
   const hemColor = clothes === "Guild Uniform" ? "#F8FAFC" : shadeHexColor(clothesColor, 24);
 
   return (
-    <div className="avatar-stage" style={{ ["--avatar-spin-duration" as string]: `${spinDurationSeconds}s` } as CSSProperties}>
+    <div
+      className="avatar-stage"
+      style={
+        {
+          ["--avatar-spin-duration" as string]: `${spinDurationSeconds}s`,
+          ["--avatar-character-scale" as string]: characterScale,
+          ["--avatar-vertical-offset" as string]: `${verticalOffset}px`
+        } as CSSProperties
+      }
+    >
       <div className="avatar-aura" style={{ background: `radial-gradient(circle, ${withAlpha(clothesColor, 0.28)} 0%, transparent 72%)` }} />
       <div className="avatar-platform" />
       <div className="avatar-shadow" />

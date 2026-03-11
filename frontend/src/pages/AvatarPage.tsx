@@ -74,7 +74,7 @@ export function AvatarPage() {
               <p className="mt-1 text-lg font-semibold text-reward">{user.coins}</p>
             </div>
           </div>
-          <div className="mt-6 flex min-h-[420px] items-center justify-center rounded-[28px] liquid-panel-soft">
+          <div className="mt-6 flex min-h-[420px] items-center justify-center overflow-hidden rounded-[28px] liquid-panel-soft">
             <div className="w-full max-w-md px-4 py-6">
               <AvatarPreview3D
                 nickname={user.nickname}
@@ -84,6 +84,8 @@ export function AvatarPage() {
                 skinColor={skinColor}
                 hairColor={hairColor}
                 clothesColor={clothesColor}
+                characterScale={0.82}
+                verticalOffset={34}
               />
               <p className="mt-4 text-center text-sm text-slate-600">{accessories.join(", ") || "액세서리 없음"}</p>
               <div className="mt-5 grid grid-cols-2 gap-3 text-left text-xs text-slate-600">

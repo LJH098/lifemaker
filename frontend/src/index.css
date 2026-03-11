@@ -252,10 +252,10 @@ textarea::placeholder {
 .avatar-character {
   position: absolute;
   left: 50%;
-  bottom: 3.8rem;
+  bottom: calc(3.8rem - var(--avatar-vertical-offset, 0px));
   width: 220px;
   height: 320px;
-  transform: translateX(-50%) rotateX(-10deg);
+  transform: translateX(-50%) rotateX(-10deg) scale(var(--avatar-character-scale, 1));
   transform-style: preserve-3d;
 }
 

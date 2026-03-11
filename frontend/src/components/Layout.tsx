@@ -80,7 +80,7 @@ export function Layout() {
             <div className="rounded-[28px] liquid-panel-soft p-4">
               <div className="flex items-start gap-3">
                 <div className="flex h-[156px] w-[112px] shrink-0 items-start justify-center overflow-visible rounded-[24px] bg-white/30 px-1 pt-3">
-                  <div className="origin-top scale-[0.31]">
+                  <div className="mt-4 origin-top scale-[0.31]">
                     <AvatarPreview3D
                       nickname={user.nickname}
                       hair={user.avatar.hair}
