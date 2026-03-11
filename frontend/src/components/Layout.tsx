@@ -1,4 +1,4 @@
-import { Bell, Coins, Home, LogOut, ScrollText, Sparkles, User, Users } from "lucide-react";
+import { Bell, Coins, Home, LogOut, Palette, ScrollText, Sparkles, User, Users } from "lucide-react";
 import { NavLink, Outlet, useNavigate } from "react-router-dom";
 import { AvatarPreview3D } from "./AvatarPreview3D";
 import { useApp } from "../context/AppContext";
@@ -8,7 +8,7 @@ const navItems = [
   { label: "Quest Hub", path: "/quests", icon: ScrollText },
   { label: "Plaza", path: "/plaza", icon: Users },
   { label: "My Room", path: "/room", icon: Sparkles },
-  { label: "Avatar Studio", path: "/avatar", icon: User },
+  { label: "Avatar Studio", path: "/avatar", icon: Palette },
   { label: "Profile", path: "/profile", icon: User }
 ];
 
