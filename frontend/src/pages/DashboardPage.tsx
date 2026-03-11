@@ -14,6 +14,19 @@ export function DashboardPage() {
 
   const inProgressQuests = quests.filter((quest) => quest.status !== "completed");
   const completedCount = quests.length - inProgressQuests.length;
+  const currentLevelFloor = (user.level - 1) * 300;
+  const expProgress = Math.min(((user.exp - currentLevelFloor) / 300) * 100, 100);
+  const expToNextLevel = Math.max(currentLevelFloor + 300 - user.exp, 0);
+  const statLabels: Record<string, string> = {
+    focus: "집중력",
+    knowledge: "지식",
+    health: "체력",
+    social: "소셜",
+    discipline: "꾸준함"
+  };
+  const primaryStatEntry = Object.entries(user.stats).sort(([, left], [, right]) => right - left)[0];
+  const primaryStatLabel = primaryStatEntry ? statLabels[primaryStatEntry[0]] ?? primaryStatEntry[0] : "집중력";
+  const primaryStatValue = primaryStatEntry?.[1] ?? 0;
 
   const handleComplete = async (questId: string) => {
     setBusyQuestId(questId);
@@ -25,100 +38,162 @@ export function DashboardPage() {
   };
 
   return (
-    <div className="space-y-6">
-      <section className="grid gap-4 xl:grid-cols-[1.3fr_0.9fr]">
-        <div className="grid-panel rounded-[32px] border border-slate-800 bg-card p-6">
-          <p className="text-sm uppercase tracking-[0.3em] text-accent">Today&apos;s Run</p>
-          <h1 className="mt-3 font-display text-4xl font-bold text-white">현실을 플레이하는 메인 대시보드</h1>
-          <p className="mt-3 max-w-2xl text-slate-400">오늘의 퀘스트를 완료하고 레벨을 올리세요. 작은 행동이 곧 캐릭터 성장으로 연결됩니다.</p>
+    <div className="space-y-5">
+      <section className="grid gap-5 xl:items-start xl:grid-cols-[0.58fr_1.42fr]">
+        <div className="self-start rounded-[36px] liquid-panel p-5 lg:p-6">
+          <div className="rounded-[28px] liquid-panel-soft p-4">
+            <div className="flex items-center gap-4">
+              <div className="shrink-0 text-center">
+                <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-full shadow-[inset_0_-8px_18px_rgba(0,0,0,0.06)]" style={{ backgroundColor: user.avatar.colors.skin }}>
+                  <div className="h-14 w-14 rounded-full shadow-[inset_0_-8px_18px_rgba(0,0,0,0.08)]" style={{ backgroundColor: user.avatar.colors.hair }} />
+                </div>
+                <div className="mx-auto mt-3 h-24 w-16 rounded-t-[28px] shadow-[inset_0_-10px_20px_rgba(0,0,0,0.08)]" style={{ backgroundColor: user.avatar.colors.clothes }} />
+              </div>
+              <div className="min-w-0 flex-1">
+                <p className="text-xl font-semibold text-ink">{user.nickname}</p>
+                <p className="mt-1 text-sm text-slate-600">Lv.{user.level} · {primaryStatLabel} 집중 성장</p>
+                <div className="mt-3 flex flex-wrap gap-2 text-xs text-slate-600">
+                  <span className="rounded-full liquid-chip px-3 py-2">{user.avatar.hair}</span>
+                  <span className="rounded-full liquid-chip px-3 py-2">{user.avatar.clothes}</span>
+                </div>
+              </div>
+            </div>
+            <p className="mt-4 text-sm leading-relaxed text-slate-600">{user.avatar.accessories.join(", ") || "액세서리 없음"}</p>
+            <div className="mt-4 grid gap-2 text-sm sm:grid-cols-2">
+              {Object.entries(user.stats).map(([key, value]) => (
+                <div key={key} className="rounded-2xl liquid-chip px-3 py-3">
+                  <div className="flex items-center justify-between">
+                    <span className="text-slate-600">{statLabels[key] ?? key}</span>
+                    <span className="font-semibold text-ink">{value}</span>
+                  </div>
+                  <div className="mt-2 h-2 rounded-full bg-white/60">
+                    <div className="h-2 rounded-full bg-accent" style={{ width: `${value}%` }} />
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        <div className="grid-panel rounded-[36px] liquid-panel p-6 lg:p-7">
+          <div className="flex flex-wrap items-start justify-between gap-4">
+            <div>
+              <p className="text-sm uppercase tracking-[0.32em] text-accent">Today&apos;s Run</p>
+              <p className="mt-3 max-w-2xl text-base leading-relaxed text-slate-600">
+                오늘 해야 할 퀘스트와 성장 흐름을 한 번에 확인하세요. 작은 행동 하나도 캐릭터 성장과 바로 연결됩니다.
+              </p>
+            </div>
+            <Link to="/ai-quests" className="inline-flex items-center gap-3 rounded-2xl bg-accent px-4 py-3 font-semibold text-[#35516a]">
+              <Sparkles size={18} />
+              목표 분석하고 퀘스트 받기
+            </Link>
+          </div>
+
           <div className="mt-6 grid gap-3 md:grid-cols-3">
-            <div className="rounded-3xl bg-slate-900/80 p-4">
+            <div className="rounded-[28px] liquid-panel-soft p-5">
               <div className="flex items-center gap-2 text-accent">
                 <Target size={16} />
                 오늘의 퀘스트
               </div>
-              <p className="mt-3 text-3xl font-bold text-white">{inProgressQuests.length}</p>
+              <p className="mt-3 text-3xl font-bold text-ink">{inProgressQuests.length}</p>
+              <p className="mt-2 text-sm text-slate-600">오늘 처리해야 할 활성 퀘스트 수</p>
             </div>
-            <div className="rounded-3xl bg-slate-900/80 p-4">
+            <div className="rounded-[28px] liquid-panel-soft p-5">
               <div className="flex items-center gap-2 text-reward">
                 <Trophy size={16} />
-                완료 실적
+                완료 기록
               </div>
-              <p className="mt-3 text-3xl font-bold text-white">{completedCount}</p>
+              <p className="mt-3 text-3xl font-bold text-ink">{completedCount}</p>
+              <p className="mt-2 text-sm text-slate-600">지금까지 보상을 획득한 퀘스트 수</p>
             </div>
-            <div className="rounded-3xl bg-slate-900/80 p-4">
+            <div className="rounded-[28px] liquid-panel-soft p-5">
               <div className="flex items-center gap-2 text-sky-400">
                 <UserRound size={16} />
                 현재 레벨
               </div>
-              <p className="mt-3 text-3xl font-bold text-white">Lv.{user.level}</p>
+              <p className="mt-3 text-3xl font-bold text-ink">Lv.{user.level}</p>
+              <p className="mt-2 text-sm text-slate-600">다음 레벨까지 {expToNextLevel} EXP</p>
             </div>
           </div>
-        </div>
 
-        <div className="rounded-[32px] border border-slate-800 bg-card p-6">
-          <p className="font-display text-xl text-white">능력치 패널</p>
-          <div className="mt-5 space-y-4">
-            {Object.entries(user.stats).map(([key, value]) => (
-              <div key={key}>
-                <div className="mb-2 flex items-center justify-between text-sm">
-                  <span className="capitalize">{key}</span>
-                  <span>{value}</span>
-                </div>
-                <div className="h-2 rounded-full bg-slate-700">
-                  <div className="h-2 rounded-full bg-accent" style={{ width: `${value}%` }} />
-                </div>
+          <div className="mt-5 grid gap-3 lg:grid-cols-[0.88fr_1.12fr]">
+            <div className="rounded-[28px] liquid-panel-soft p-5">
+              <p className="text-xs uppercase tracking-[0.28em] text-slate-500">Main stat</p>
+              <p className="mt-2 text-lg font-semibold text-ink">{primaryStatLabel}</p>
+              <p className="mt-1 text-3xl font-bold text-ink">{primaryStatValue}</p>
+              <p className="mt-5 text-xs uppercase tracking-[0.28em] text-slate-500">Next level</p>
+              <p className="mt-2 text-lg font-semibold text-ink">{expToNextLevel} EXP 남음</p>
+              <div className="mt-3 h-2 rounded-full bg-white/60">
+                <div className="h-2 rounded-full bg-accent" style={{ width: `${expProgress}%` }} />
               </div>
-            ))}
+            </div>
+            <div className="rounded-[28px] liquid-panel-soft p-5">
+              <p className="text-xs uppercase tracking-[0.28em] text-slate-500">Today summary</p>
+              <p className="mt-2 text-xl font-semibold text-ink">오늘은 {inProgressQuests.length}개의 퀘스트가 진행 중입니다.</p>
+              <p className="mt-3 text-sm leading-relaxed text-slate-600">
+                완료 기록 {completedCount}개, 다음 레벨까지 {expToNextLevel} EXP가 남아 있습니다. 우선순위가 높은 퀘스트부터 차례대로 처리해 보세요.
+              </p>
+            </div>
           </div>
         </div>
       </section>
 
-      <section className="grid gap-4 xl:grid-cols-[1.4fr_0.8fr]">
-        <div className="space-y-4">
-          <div className="flex items-center justify-between">
-            <h2 className="font-display text-2xl text-white">오늘의 퀘스트</h2>
-            <Link to="/quests" className="rounded-2xl border border-slate-700 px-4 py-2 text-sm text-slate-300">
+      <section className="grid gap-5 xl:grid-cols-[1.2fr_0.8fr]">
+        <div className="rounded-[36px] liquid-panel p-6 lg:p-7">
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <div>
+              <h2 className="font-display text-2xl text-ink">오늘의 퀘스트 보드</h2>
+              <p className="mt-2 text-sm text-slate-600">활성 퀘스트를 처리하고 바로 보상과 레벨업 흐름으로 연결해 보세요.</p>
+            </div>
+            <Link to="/quests" className="rounded-2xl border border-white/45 px-4 py-2 text-sm text-slate-600 transition hover:bg-white/35 hover:text-ink">
               전체 보기
             </Link>
           </div>
-          {inProgressQuests.length === 0 ? (
-            <div className="rounded-3xl border border-dashed border-slate-700 bg-card p-6 text-slate-400">
-              아직 진행 중인 퀘스트가 없습니다. AI Goal Analysis에서 새 퀘스트를 생성해보세요.
-            </div>
-          ) : (
-            inProgressQuests.slice(0, 3).map((quest) => (
-              <QuestCard key={quest.id} quest={quest} onComplete={handleComplete} busy={busyQuestId === quest.id} />
-            ))
-          )}
+
+          <div className="mt-6 space-y-4 xl:min-h-[390px]">
+            {inProgressQuests.length === 0 ? (
+              <div className="grid min-h-[300px] rounded-[30px] liquid-panel-soft px-6 py-10">
+                <div className="my-auto">
+                  <p className="text-sm uppercase tracking-[0.28em] text-accent">Quest queue is empty</p>
+                  <p className="mt-3 text-2xl font-semibold text-ink">아직 진행 중인 퀘스트가 없습니다.</p>
+                  <p className="mt-3 max-w-xl text-sm leading-relaxed text-slate-600">AI 분석에서 새 퀘스트를 생성하면 이 보드에 오늘의 액션들이 채워집니다.</p>
+                  <div className="mt-5">
+                    <Link to="/ai-quests" className="inline-flex items-center gap-2 rounded-2xl bg-accent px-4 py-3 font-semibold text-[#35516a]">
+                      <Sparkles size={16} />
+                      첫 퀘스트 만들기
+                    </Link>
+                  </div>
+                </div>
+              </div>
+            ) : (
+              inProgressQuests.slice(0, 3).map((quest) => <QuestCard key={quest.id} quest={quest} onComplete={handleComplete} busy={busyQuestId === quest.id} />)
+            )}
+          </div>
         </div>
 
-        <div className="space-y-4">
-          <div className="rounded-[32px] border border-slate-800 bg-card p-6">
-            <p className="font-display text-xl text-white">추천 퀘스트</p>
-            <div className="mt-4 rounded-3xl bg-slate-900/80 p-4">
-              <p className="text-sm text-accent">AI 추천</p>
-              <p className="mt-2 text-lg font-semibold text-white">{inProgressQuests[0]?.title ?? "목표를 입력하고 첫 퀘스트를 생성해보세요."}</p>
-              <p className="mt-2 text-sm text-slate-400">{inProgressQuests[0]?.description ?? "현재 상황 분석을 기반으로 AI가 바로 실천 가능한 퀘스트를 설계해줍니다."}</p>
+        <div className="space-y-5">
+          <div className="rounded-[36px] liquid-panel p-6 lg:p-7">
+            <div className="flex items-center justify-between gap-3">
+              <p className="font-display text-2xl text-ink">추천 퀘스트</p>
+              <span className="rounded-full bg-accent/15 px-3 py-1 text-xs font-semibold text-accent">AI 추천</span>
+            </div>
+            <div className="mt-5 rounded-[30px] liquid-panel-soft p-5">
+              <p className="text-lg font-semibold text-ink">{inProgressQuests[0]?.title ?? "목표를 입력하고 첫 퀘스트를 생성해 보세요."}</p>
+              <p className="mt-3 text-sm leading-relaxed text-slate-600">{inProgressQuests[0]?.description ?? "현재 상황 분석을 기반으로 AI가 바로 실천 가능한 퀘스트를 추천해 줍니다."}</p>
             </div>
           </div>
-          <div className="rounded-[32px] border border-slate-800 bg-card p-6">
-            <p className="font-display text-xl text-white">레벨 보상</p>
-            <div className="mt-4 space-y-3">
-              <div className="rounded-2xl bg-slate-900/80 p-4 text-sm text-slate-300">현재 보유 코인: {user.coins}</div>
-              <div className="rounded-2xl bg-slate-900/80 p-4 text-sm text-slate-300">다음 300 EXP 단위마다 레벨업이 발생합니다.</div>
-            </div>
-          </div>
-          <div className="rounded-[32px] border border-slate-800 bg-card p-6">
-            <p className="font-display text-xl text-white">빠른 액션</p>
-            <div className="mt-4 grid gap-3">
-              <Link to="/ai-quests" className="flex items-center gap-3 rounded-2xl bg-accent px-4 py-3 font-semibold text-slate-950">
-                <Sparkles size={18} />
-                목표 분석하고 퀘스트 받기
-              </Link>
-              <Link to="/avatar" className="rounded-2xl border border-slate-700 px-4 py-3 text-sm text-slate-300">
-                아바타 커스터마이즈
-              </Link>
+
+          <div className="rounded-[36px] liquid-panel p-6 lg:p-7">
+            <p className="font-display text-2xl text-ink">레벨 보상</p>
+            <div className="mt-5 grid gap-3">
+              <div className="rounded-[24px] liquid-panel-soft p-4">
+                <p className="text-sm text-slate-500">현재 보유 코인</p>
+                <p className="mt-2 text-2xl font-bold text-ink">{user.coins}</p>
+              </div>
+              <div className="rounded-[24px] liquid-panel-soft p-4">
+                <p className="text-sm text-slate-500">레벨업 안내</p>
+                <p className="mt-2 text-sm leading-relaxed text-slate-600">다음 300 EXP 단위마다 레벨업이 발생합니다. 지금은 {expToNextLevel} EXP만 더 모으면 다음 단계로 이동합니다.</p>
+              </div>
             </div>
           </div>
         </div>

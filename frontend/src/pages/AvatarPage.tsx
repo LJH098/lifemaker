@@ -4,16 +4,16 @@ import { useApp } from "../context/AppContext";
 
 const hairOptions = [
   { name: "Starter Cut", vibe: "깔끔한 기본형" },
-  { name: "Cyber Cut", vibe: "네온 감성" },
-  { name: "Wave Rider", vibe: "부드러운 웨이브" },
-  { name: "Guild Buzz", vibe: "짧고 강한 인상" }
+  { name: "Cyber Cut", vibe: "미래적인 감성" },
+  { name: "Wave Rider", vibe: "부드러운 자유형" },
+  { name: "Guild Buzz", vibe: "강한 존재감" }
 ];
 
 const clothesOptions = [
-  { name: "Novice Hoodie", vibe: "입문자 후디" },
-  { name: "Explorer Jacket", vibe: "모험가 재킷" },
-  { name: "Focus Armor", vibe: "집중형 아머" },
-  { name: "Guild Uniform", vibe: "길드 유니폼" }
+  { name: "Novice Hoodie", vibe: "입문자용 캐주얼" },
+  { name: "Explorer Jacket", vibe: "모험가 스타일" },
+  { name: "Focus Armor", vibe: "집중 특화 장비" },
+  { name: "Guild Uniform", vibe: "길드 대표 유니폼" }
 ];
 
 const accessoryOptions = ["Beginner Badge", "Focus Charm", "Green Visor", "Lucky Ring"];
@@ -73,35 +73,35 @@ export function AvatarPage() {
 
   return (
     <div className="grid gap-6 xl:grid-cols-[0.9fr_1.1fr]">
-      <section className="rounded-[32px] border border-slate-800 bg-card p-6 shadow-glow">
+      <section className="rounded-[32px] liquid-panel p-6">
         <div className="flex items-center justify-between">
           <div>
-            <p className="font-display text-3xl text-white">Avatar Forge</p>
-            <p className="mt-2 text-sm text-slate-400">조금 더 게임 캐릭터 같은 실루엣으로 다시 다듬은 아바타 미리보기입니다.</p>
+            <p className="font-display text-3xl text-ink">Avatar Forge</p>
+            <p className="mt-2 text-sm text-slate-600">실시간 미리보기로 현재 장착 중인 헤어, 의상, 장신구 조합을 바로 확인할 수 있습니다.</p>
           </div>
           <div className="rounded-2xl border border-accent/30 bg-accent/10 px-3 py-2 text-xs text-accent">Live Preview</div>
         </div>
 
-        <div className="mt-6 overflow-hidden rounded-[28px] border border-slate-800 bg-[radial-gradient(circle_at_top,rgba(34,197,94,0.18),transparent_35%),linear-gradient(180deg,#111827_0%,#020617_100%)] p-8">
-          <div className="mx-auto max-w-sm rounded-[32px] border border-white/5 bg-slate-950/40 p-6 backdrop-blur">
+        <div className="mt-6 overflow-hidden rounded-[28px] liquid-panel-soft p-8">
+          <div className="mx-auto max-w-sm rounded-[32px] liquid-panel-deep p-6">
             <div className="relative mx-auto h-[360px] w-[240px]">
               <div className="absolute inset-x-10 top-0 h-24 rounded-t-[80px] rounded-b-[42px]" style={{ backgroundColor: hairColor }} />
-              <div className="absolute inset-x-[54px] top-10 h-28 rounded-[48px] border-4 border-slate-950/60" style={{ backgroundColor: skinColor }} />
+              <div className="absolute inset-x-[54px] top-10 h-28 rounded-[48px] border-4 border-white/30" style={{ backgroundColor: skinColor }} />
               <div className="absolute left-[78px] top-[72px] h-3 w-3 rounded-full bg-slate-900" />
               <div className="absolute right-[78px] top-[72px] h-3 w-3 rounded-full bg-slate-900" />
               <div className="absolute left-[92px] top-[96px] h-2 w-14 rounded-full bg-slate-900/70" />
-              <div className="absolute inset-x-8 top-[132px] h-44 rounded-[42px] border border-white/10" style={{ backgroundColor: clothesColor }} />
+              <div className="absolute inset-x-8 top-[132px] h-44 rounded-[42px] border border-white/30" style={{ backgroundColor: clothesColor }} />
               <div className="absolute left-[30px] top-[150px] h-28 w-10 rounded-full" style={{ backgroundColor: clothesColor }} />
               <div className="absolute right-[30px] top-[150px] h-28 w-10 rounded-full" style={{ backgroundColor: clothesColor }} />
-              <div className="absolute left-[70px] top-[286px] h-16 w-8 rounded-full bg-slate-700" />
-              <div className="absolute right-[70px] top-[286px] h-16 w-8 rounded-full bg-slate-700" />
-              <div className="absolute inset-x-16 top-[154px] h-10 rounded-2xl border border-white/10 bg-slate-950/25" />
+              <div className="absolute left-[70px] top-[286px] h-16 w-8 rounded-full bg-slate-500" />
+              <div className="absolute right-[70px] top-[286px] h-16 w-8 rounded-full bg-slate-500" />
+              <div className="absolute inset-x-16 top-[154px] h-10 rounded-2xl border border-white/20 bg-white/15" />
               <div className="absolute left-4 top-6 rounded-full border border-reward/30 bg-reward/15 px-3 py-1 text-[10px] font-semibold text-reward">{hair}</div>
               <div className="absolute right-2 top-[180px] rounded-full border border-accent/30 bg-accent/15 px-3 py-1 text-[10px] font-semibold text-accent">{clothes}</div>
               {accessories.length > 0 && (
                 <div className="absolute bottom-4 left-1/2 flex -translate-x-1/2 gap-2">
                   {accessories.map((item) => (
-                    <span key={item} className="rounded-full border border-slate-700 bg-slate-900/80 px-3 py-1 text-[10px] text-slate-200">
+                    <span key={item} className="rounded-full border border-white/35 bg-white/60 px-3 py-1 text-[10px] text-slate-700">
                       {item}
                     </span>
                   ))}
@@ -109,11 +109,11 @@ export function AvatarPage() {
               )}
             </div>
 
-            <div className="mt-4 rounded-3xl border border-slate-800 bg-slate-950/80 p-4">
+            <div className="mt-4 rounded-3xl liquid-panel-soft p-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-xl font-semibold text-white">{user.nickname}</p>
-                  <p className="mt-1 text-sm text-slate-400">Lv.{user.level} Life RPG Adventurer</p>
+                  <p className="text-xl font-semibold text-ink">{user.nickname}</p>
+                  <p className="mt-1 text-sm text-slate-600">Lv.{user.level} Life RPG Adventurer</p>
                 </div>
                 <div className="rounded-2xl bg-accent/15 p-3 text-accent">
                   <Sparkles size={18} />
@@ -124,17 +124,17 @@ export function AvatarPage() {
         </div>
       </section>
 
-      <section className="rounded-[32px] border border-slate-800 bg-card p-6">
+      <section className="rounded-[32px] liquid-panel p-6">
         <div className="flex items-center gap-3">
           <Palette className="text-accent" size={20} />
-          <p className="font-display text-2xl text-white">Customize</p>
+          <p className="font-display text-2xl text-ink">Customize</p>
         </div>
 
         <form className="mt-6 space-y-6" onSubmit={handleSubmit}>
           <div>
-            <div className="mb-3 flex items-center gap-2 text-sm text-slate-300">
+            <div className="mb-3 flex items-center gap-2 text-sm text-slate-600">
               <Crown size={16} />
-              헤어 스타일
+              헤어 선택
             </div>
             <div className="grid gap-3 md:grid-cols-2">
               {hairOptions.map((option) => {
@@ -145,11 +145,11 @@ export function AvatarPage() {
                     type="button"
                     onClick={() => setHair(option.name)}
                     className={`rounded-3xl border p-4 text-left transition ${
-                      active ? "border-accent bg-accent/10 shadow-glow" : "border-slate-800 bg-slate-900/70 hover:border-slate-600"
+                      active ? "border-accent bg-accent/10" : "border-white/45 liquid-panel-soft hover:bg-white/65"
                     }`}
                   >
-                    <p className="font-semibold text-white">{option.name}</p>
-                    <p className="mt-1 text-sm text-slate-400">{option.vibe}</p>
+                    <p className="font-semibold text-ink">{option.name}</p>
+                    <p className="mt-1 text-sm text-slate-600">{option.vibe}</p>
                   </button>
                 );
               })}
@@ -157,7 +157,7 @@ export function AvatarPage() {
           </div>
 
           <div>
-            <div className="mb-3 flex items-center gap-2 text-sm text-slate-300">
+            <div className="mb-3 flex items-center gap-2 text-sm text-slate-600">
               <Shield size={16} />
               의상 선택
             </div>
@@ -170,11 +170,11 @@ export function AvatarPage() {
                     type="button"
                     onClick={() => setClothes(option.name)}
                     className={`rounded-3xl border p-4 text-left transition ${
-                      active ? "border-accent bg-accent/10 shadow-glow" : "border-slate-800 bg-slate-900/70 hover:border-slate-600"
+                      active ? "border-accent bg-accent/10" : "border-white/45 liquid-panel-soft hover:bg-white/65"
                     }`}
                   >
-                    <p className="font-semibold text-white">{option.name}</p>
-                    <p className="mt-1 text-sm text-slate-400">{option.vibe}</p>
+                    <p className="font-semibold text-ink">{option.name}</p>
+                    <p className="mt-1 text-sm text-slate-600">{option.vibe}</p>
                   </button>
                 );
               })}
@@ -182,7 +182,7 @@ export function AvatarPage() {
           </div>
 
           <div>
-            <div className="mb-3 flex items-center gap-2 text-sm text-slate-300">
+            <div className="mb-3 flex items-center gap-2 text-sm text-slate-600">
               <Star size={16} />
               액세서리 선택
             </div>
@@ -194,8 +194,8 @@ export function AvatarPage() {
                     key={option}
                     type="button"
                     onClick={() => toggleAccessory(option)}
-                    className={`rounded-2xl border px-4 py-2 text-sm transition ${
-                      active ? "border-accent bg-accent/15 text-accent" : "border-slate-700 bg-slate-900 text-slate-300 hover:border-slate-500"
+                    className={`rounded-2xl border px-4 py-2 text-sm ${
+                      active ? "border-accent bg-accent/15 text-accent" : "border-white/45 liquid-panel-soft text-slate-600"
                     }`}
                   >
                     {option}
@@ -208,22 +208,22 @@ export function AvatarPage() {
 
           <div className="grid gap-4 md:grid-cols-3">
             <label className="block">
-              <span className="mb-2 block text-sm text-slate-300">피부 색상</span>
-              <input type="color" value={skinColor} onChange={(event) => setSkinColor(event.target.value)} className="h-14 w-full rounded-2xl border border-slate-700 bg-slate-900 p-2" />
+              <span className="mb-2 block text-sm text-slate-600">Skin Color</span>
+              <input type="color" value={skinColor} onChange={(event) => setSkinColor(event.target.value)} className="h-14 w-full rounded-2xl liquid-input p-2" />
             </label>
             <label className="block">
-              <span className="mb-2 block text-sm text-slate-300">머리 색상</span>
-              <input type="color" value={hairColor} onChange={(event) => setHairColor(event.target.value)} className="h-14 w-full rounded-2xl border border-slate-700 bg-slate-900 p-2" />
+              <span className="mb-2 block text-sm text-slate-600">Hair Color</span>
+              <input type="color" value={hairColor} onChange={(event) => setHairColor(event.target.value)} className="h-14 w-full rounded-2xl liquid-input p-2" />
             </label>
             <label className="block">
-              <span className="mb-2 block text-sm text-slate-300">의상 색상</span>
-              <input type="color" value={clothesColor} onChange={(event) => setClothesColor(event.target.value)} className="h-14 w-full rounded-2xl border border-slate-700 bg-slate-900 p-2" />
+              <span className="mb-2 block text-sm text-slate-600">Clothes Color</span>
+              <input type="color" value={clothesColor} onChange={(event) => setClothesColor(event.target.value)} className="h-14 w-full rounded-2xl liquid-input p-2" />
             </label>
           </div>
 
-          {message && <div className="rounded-2xl border border-slate-700 bg-slate-900 px-4 py-3 text-sm text-slate-300">{message}</div>}
+          {message && <div className="rounded-2xl liquid-input px-4 py-3 text-sm text-slate-600">{message}</div>}
 
-          <button disabled={saving} className="rounded-2xl bg-accent px-5 py-3 font-semibold text-slate-950 disabled:bg-slate-700 disabled:text-slate-300">
+          <button disabled={saving} className="rounded-2xl bg-accent px-5 py-3 font-semibold text-[#35516a] disabled:bg-white/60 disabled:text-slate-600">
             {saving ? "저장 중..." : "아바타 저장"}
           </button>
         </form>
