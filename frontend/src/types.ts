@@ -17,6 +17,21 @@ export type Avatar = {
   };
 };
 
+export type RoomPlacement = {
+  itemId: string;
+  x: number;
+  y: number;
+  layer: number;
+};
+
+export type RoomState = {
+  title: string;
+  isPublic: boolean;
+  wallTheme: string;
+  floorTheme: string;
+  placements: RoomPlacement[];
+};
+
 export type User = {
   id: string;
   email: string;
@@ -25,6 +40,7 @@ export type User = {
   exp: number;
   coins: number;
   ownedItemIds: string[];
+  room: RoomState;
   avatar: Avatar;
   stats: UserStats;
 };
@@ -85,4 +101,12 @@ export type CompleteQuestPayload = {
 export type PurchaseItemPayload = {
   itemId: string;
   user: User;
+};
+
+export type RoomUpdatePayload = {
+  title: string;
+  isPublic: boolean;
+  wallTheme: string;
+  floorTheme: string;
+  placements: RoomPlacement[];
 };

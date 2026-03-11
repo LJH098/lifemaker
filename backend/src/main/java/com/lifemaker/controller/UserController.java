@@ -1,6 +1,7 @@
 package com.lifemaker.controller;
 
 import com.lifemaker.dto.AvatarUpdateRequest;
+import com.lifemaker.dto.RoomUpdateRequest;
 import com.lifemaker.dto.UserResponse;
 import com.lifemaker.model.User;
 import com.lifemaker.service.UserService;
@@ -32,5 +33,11 @@ public class UserController {
     public ResponseEntity<UserResponse> updateAvatar(@AuthenticationPrincipal User user,
                                                      @Valid @RequestBody AvatarUpdateRequest request) {
         return ResponseEntity.ok(UserResponse.from(userService.updateAvatar(user.getId(), request)));
+    }
+
+    @PutMapping("/room")
+    public ResponseEntity<UserResponse> updateRoom(@AuthenticationPrincipal User user,
+                                                   @Valid @RequestBody RoomUpdateRequest request) {
+        return ResponseEntity.ok(UserResponse.from(userService.updateRoom(user.getId(), request)));
     }
 }

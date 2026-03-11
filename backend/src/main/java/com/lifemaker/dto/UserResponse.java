@@ -1,6 +1,7 @@
 package com.lifemaker.dto;
 
 import com.lifemaker.model.Avatar;
+import com.lifemaker.model.RoomState;
 import com.lifemaker.model.User;
 import com.lifemaker.model.UserStats;
 
@@ -14,6 +15,7 @@ public record UserResponse(
     int exp,
     int coins,
     List<String> ownedItemIds,
+    RoomResponse room,
     AvatarResponse avatar,
     UserStatsResponse stats
 ) {
@@ -26,9 +28,39 @@ public record UserResponse(
             user.getExp(),
             user.getCoins(),
             List.copyOf(user.getOwnedItemIds()),
+            RoomResponse.from(user.getRoom()),
             AvatarResponse.from(user.getAvatar()),
             UserStatsResponse.from(user.getStats())
         );
+    }
+
+    public record RoomResponse(
+        String title,
+        boolean isPublic,
+        String wallTheme,
+        String floorTheme,
+        List<PlacedItemResponse> placements
+    ) {
+        static RoomResponse from(RoomState roomState) {
+            return new RoomResponse(
+                roomState.getTitle(),
+                roomState.isPublic(),
+                roomState.getWallTheme(),
+                roomState.getFloorTheme(),
+                roomState.getPlacements().stream().map(PlacedItemResponse::from).toList()
+            );
+        }
+    }
+
+    public record PlacedItemResponse(
+        String itemId,
+        int x,
+        int y,
+        int layer
+    ) {
+        static PlacedItemResponse from(RoomState.PlacedItem item) {
+            return new PlacedItemResponse(item.getItemId(), item.getX(), item.getY(), item.getLayer());
+        }
     }
 
     public record AvatarResponse(

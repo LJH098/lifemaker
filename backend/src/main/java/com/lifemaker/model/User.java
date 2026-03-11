@@ -22,6 +22,7 @@ public class User {
     private Avatar avatar;
     private UserStats stats;
     private List<String> ownedItemIds;
+    private RoomState room;
 
     public User() {
     }
@@ -36,7 +37,8 @@ public class User {
         this.coins = 200;
         this.avatar = Avatar.starter();
         this.stats = UserStats.starter();
-        this.ownedItemIds = new ArrayList<>();
+        this.ownedItemIds = new ArrayList<>(List.of("i-3", "i-5", "i-6"));
+        this.room = RoomState.starter(nickname);
     }
 
     public String getId() {
@@ -120,5 +122,16 @@ public class User {
 
     public void setOwnedItemIds(List<String> ownedItemIds) {
         this.ownedItemIds = ownedItemIds == null ? new ArrayList<>() : new ArrayList<>(ownedItemIds);
+    }
+
+    public RoomState getRoom() {
+        if (room == null) {
+            room = RoomState.starter(nickname == null ? "LifeMaker" : nickname);
+        }
+        return room;
+    }
+
+    public void setRoom(RoomState room) {
+        this.room = room;
     }
 }
