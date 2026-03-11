@@ -27,10 +27,10 @@ export function Layout() {
   return (
     <div className="min-h-screen bg-night text-ink">
       <div className="grid min-h-screen lg:grid-cols-[260px_1fr]">
-        <aside className="grid-panel border-r border-slate-800 bg-slate-950/70 p-5 backdrop-blur">
+        <aside className="grid-panel border-r border-white/50 liquid-panel-soft p-5 backdrop-blur">
           <div>
-            <p className="font-display text-2xl font-bold text-white">인생게임</p>
-            <p className="mt-1 text-sm text-slate-400">Life RPG Control Panel</p>
+            <p className="font-display text-2xl font-bold text-ink">인생게임</p>
+            <p className="mt-1 text-sm text-slate-600">Life RPG Control Panel</p>
           </div>
           <nav className="mt-8 space-y-2">
             {navItems.map(({ label, path, icon: Icon }) => (
@@ -39,7 +39,7 @@ export function Layout() {
                 to={path}
                 className={({ isActive }) =>
                   `flex items-center gap-3 rounded-2xl px-4 py-3 transition ${
-                    isActive ? "bg-accent/15 text-white shadow-glow" : "text-slate-400 hover:bg-slate-800/70 hover:text-white"
+                    isActive ? "bg-accent/15 text-ink shadow-glow" : "text-slate-600 hover:bg-white/35 hover:text-ink"
                   }`
                 }
               >
@@ -51,7 +51,7 @@ export function Layout() {
         </aside>
 
         <div className="flex flex-col">
-          <header className="sticky top-0 z-10 flex flex-wrap items-center gap-4 border-b border-slate-800 bg-slate-950/80 px-4 py-4 backdrop-blur lg:px-8">
+          <header className="sticky top-0 z-10 flex flex-wrap items-center gap-4 border-b border-white/50 liquid-panel-deep px-4 py-4 backdrop-blur lg:px-8">
             <div className="flex min-w-[220px] flex-1 items-center gap-4 rounded-2xl bg-card px-4 py-3">
               <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-accent/20 text-lg font-bold text-accent">
                 {user.nickname.slice(0, 1)}
@@ -61,7 +61,7 @@ export function Layout() {
                   <span>{user.nickname}</span>
                   <span>Lv. {user.level}</span>
                 </div>
-                <div className="mt-2 h-2 rounded-full bg-slate-700">
+                <div className="mt-2 h-2 rounded-full bg-white/60">
                   <div className="h-2 rounded-full bg-accent" style={{ width: `${expProgress}%` }} />
                 </div>
               </div>
@@ -70,11 +70,11 @@ export function Layout() {
               <Coins size={18} />
               <span className="font-semibold">{user.coins}</span>
             </div>
-            <button className="rounded-2xl bg-card p-3 text-slate-300 transition hover:text-white">
+            <button className="rounded-2xl bg-card p-3 text-slate-600 transition hover:text-ink">
               <Bell size={18} />
             </button>
             <button
-              className="flex items-center gap-2 rounded-2xl bg-card px-4 py-3 text-slate-300 transition hover:text-white"
+              className="flex items-center gap-2 rounded-2xl bg-card px-4 py-3 text-slate-600 transition hover:text-ink"
               onClick={() => {
                 logout();
                 navigate("/login", { replace: true });

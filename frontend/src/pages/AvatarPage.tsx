@@ -60,26 +60,26 @@ export function AvatarPage() {
 
   return (
     <div className="grid gap-6 xl:grid-cols-[0.8fr_1.2fr]">
-      <section className="rounded-[32px] border border-slate-800 bg-card p-6">
-        <p className="font-display text-3xl text-white">Avatar Forge</p>
-        <div className="mt-6 flex min-h-[320px] items-center justify-center rounded-[28px] bg-slate-900/80">
+      <section className="rounded-[32px] liquid-panel p-6">
+        <p className="font-display text-3xl text-ink">Avatar Forge</p>
+        <div className="mt-6 flex min-h-[320px] items-center justify-center rounded-[28px] liquid-panel-soft">
           <div className="text-center">
             <div className="mx-auto flex h-28 w-28 items-center justify-center rounded-full" style={{ backgroundColor: skinColor }}>
               <div className="h-20 w-20 rounded-full" style={{ backgroundColor: hairColor }} />
             </div>
             <div className="mx-auto mt-4 h-40 w-28 rounded-t-[40px]" style={{ backgroundColor: clothesColor }} />
-            <p className="mt-4 text-lg font-semibold text-white">{user.nickname}</p>
-            <p className="mt-2 text-sm text-slate-400">{accessories.join(", ") || "액세서리 없음"}</p>
+            <p className="mt-4 text-lg font-semibold text-ink">{user.nickname}</p>
+            <p className="mt-2 text-sm text-slate-600">{accessories.join(", ") || "액세서리 없음"}</p>
           </div>
         </div>
       </section>
-      <section className="rounded-[32px] border border-slate-800 bg-card p-6">
-        <p className="font-display text-2xl text-white">Customize</p>
+      <section className="rounded-[32px] liquid-panel p-6">
+        <p className="font-display text-2xl text-ink">Customize</p>
         <form className="mt-6 space-y-5" onSubmit={handleSubmit}>
           <div className="grid gap-4 md:grid-cols-2">
             <label className="block">
-              <span className="mb-2 block text-sm text-slate-300">Hair</span>
-              <select value={hair} onChange={(event) => setHair(event.target.value)} className="w-full rounded-2xl border border-slate-700 bg-slate-900 px-4 py-3">
+              <span className="mb-2 block text-sm text-slate-600">Hair</span>
+              <select value={hair} onChange={(event) => setHair(event.target.value)} className="w-full rounded-2xl liquid-input px-4 py-3">
                 {hairOptions.map((option) => (
                   <option key={option} value={option}>
                     {option}
@@ -88,8 +88,8 @@ export function AvatarPage() {
               </select>
             </label>
             <label className="block">
-              <span className="mb-2 block text-sm text-slate-300">Clothes</span>
-              <select value={clothes} onChange={(event) => setClothes(event.target.value)} className="w-full rounded-2xl border border-slate-700 bg-slate-900 px-4 py-3">
+              <span className="mb-2 block text-sm text-slate-600">Clothes</span>
+              <select value={clothes} onChange={(event) => setClothes(event.target.value)} className="w-full rounded-2xl liquid-input px-4 py-3">
                 {clothesOptions.map((option) => (
                   <option key={option} value={option}>
                     {option}
@@ -99,7 +99,7 @@ export function AvatarPage() {
             </label>
           </div>
           <div>
-            <p className="mb-2 text-sm text-slate-300">Accessories (최대 3개)</p>
+            <p className="mb-2 text-sm text-slate-600">Accessories (최대 3개)</p>
             <div className="flex flex-wrap gap-3">
               {accessoryOptions.map((option) => {
                 const active = accessories.includes(option);
@@ -109,7 +109,7 @@ export function AvatarPage() {
                     type="button"
                     onClick={() => toggleAccessory(option)}
                     className={`rounded-2xl border px-4 py-2 text-sm ${
-                      active ? "border-accent bg-accent/15 text-accent" : "border-slate-700 bg-slate-900 text-slate-300"
+                      active ? "border-accent bg-accent/15 text-accent" : "border-white/45 liquid-panel-soft text-slate-600"
                     }`}
                   >
                     {option}
@@ -120,20 +120,20 @@ export function AvatarPage() {
           </div>
           <div className="grid gap-4 md:grid-cols-3">
             <label className="block">
-              <span className="mb-2 block text-sm text-slate-300">Skin Color</span>
-              <input type="color" value={skinColor} onChange={(event) => setSkinColor(event.target.value)} className="h-14 w-full rounded-2xl border border-slate-700 bg-slate-900 p-2" />
+              <span className="mb-2 block text-sm text-slate-600">Skin Color</span>
+              <input type="color" value={skinColor} onChange={(event) => setSkinColor(event.target.value)} className="h-14 w-full rounded-2xl liquid-input p-2" />
             </label>
             <label className="block">
-              <span className="mb-2 block text-sm text-slate-300">Hair Color</span>
-              <input type="color" value={hairColor} onChange={(event) => setHairColor(event.target.value)} className="h-14 w-full rounded-2xl border border-slate-700 bg-slate-900 p-2" />
+              <span className="mb-2 block text-sm text-slate-600">Hair Color</span>
+              <input type="color" value={hairColor} onChange={(event) => setHairColor(event.target.value)} className="h-14 w-full rounded-2xl liquid-input p-2" />
             </label>
             <label className="block">
-              <span className="mb-2 block text-sm text-slate-300">Clothes Color</span>
-              <input type="color" value={clothesColor} onChange={(event) => setClothesColor(event.target.value)} className="h-14 w-full rounded-2xl border border-slate-700 bg-slate-900 p-2" />
+              <span className="mb-2 block text-sm text-slate-600">Clothes Color</span>
+              <input type="color" value={clothesColor} onChange={(event) => setClothesColor(event.target.value)} className="h-14 w-full rounded-2xl liquid-input p-2" />
             </label>
           </div>
-          {message && <div className="rounded-2xl border border-slate-700 bg-slate-900 px-4 py-3 text-sm text-slate-300">{message}</div>}
-          <button disabled={saving} className="rounded-2xl bg-accent px-5 py-3 font-semibold text-slate-950 disabled:bg-slate-700 disabled:text-slate-300">
+          {message && <div className="rounded-2xl liquid-input px-4 py-3 text-sm text-slate-600">{message}</div>}
+          <button disabled={saving} className="rounded-2xl bg-accent px-5 py-3 font-semibold text-[#35516a] disabled:bg-white/60 disabled:text-slate-600">
             {saving ? "저장 중..." : "아바타 저장"}
           </button>
         </form>

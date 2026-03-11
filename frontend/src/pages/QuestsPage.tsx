@@ -18,12 +18,12 @@ export function QuestsPage() {
   return (
     <div>
       <div className="mb-6">
-        <h1 className="font-display text-3xl text-white">Quest Log</h1>
-        <p className="mt-2 text-slate-400">진행 중인 퀘스트를 관리하고 완료 버튼으로 성장 보상을 획득하세요.</p>
+        <h1 className="font-display text-3xl text-ink">Quest Log</h1>
+        <p className="mt-2 text-slate-600">진행 중인 퀘스트를 관리하고 완료 버튼으로 성장 보상을 획득하세요.</p>
       </div>
       <div className="grid gap-4 xl:grid-cols-2">
         {quests.length === 0 ? (
-          <div className="rounded-3xl border border-dashed border-slate-700 bg-card p-6 text-slate-400">
+          <div className="rounded-3xl border border-dashed border-white/45 bg-card p-6 text-slate-600">
             생성된 퀘스트가 없습니다. AI Goal Analysis 탭에서 첫 퀘스트를 만들어보세요.
           </div>
         ) : (
