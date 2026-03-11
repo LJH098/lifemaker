@@ -1,15 +1,13 @@
 import { Navigate, Outlet, Route, Routes } from "react-router-dom";
 import { Layout } from "./components/Layout";
 import { useApp } from "./context/AppContext";
-import { AiQuestPage } from "./pages/AiQuestPage";
 import { AuthPage } from "./pages/AuthPage";
 import { AvatarPage } from "./pages/AvatarPage";
 import { DashboardPage } from "./pages/DashboardPage";
 import { PlazaPage } from "./pages/PlazaPage";
 import { ProfilePage } from "./pages/ProfilePage";
 import { QuestsPage } from "./pages/QuestsPage";
-import { RoomPage } from "./pages/RoomPage";
-import { ShopPage } from "./pages/ShopPage";
+import { RoomPage, RoomSettingsPage } from "./pages/RoomPage";
 
 function ProtectedRoute() {
   const { isAuthenticated, loadingSession } = useApp();
@@ -42,11 +40,12 @@ function App() {
         <Route element={<Layout />}>
           <Route path="/" element={<DashboardPage />} />
           <Route path="/quests" element={<QuestsPage />} />
-          <Route path="/ai-quests" element={<AiQuestPage />} />
+          <Route path="/ai-quests" element={<Navigate to="/quests" replace />} />
           <Route path="/plaza" element={<PlazaPage />} />
           <Route path="/room" element={<RoomPage />} />
+          <Route path="/room/settings" element={<RoomSettingsPage />} />
           <Route path="/avatar" element={<AvatarPage />} />
-          <Route path="/shop" element={<ShopPage />} />
+          <Route path="/shop" element={<Navigate to="/avatar" replace />} />
           <Route path="/profile" element={<ProfilePage />} />
         </Route>
       </Route>

@@ -1,6 +1,6 @@
 import { createContext, ReactNode, useContext, useEffect, useState } from "react";
 import { api, extractApiError } from "../services/api";
-import { AuthPayload, CompleteQuestPayload, GeneratePlanPayload, PurchaseItemPayload, Quest, RoomUpdatePayload, ShopItem, User } from "../types";
+import { AuthPayload, CompleteQuestPayload, GeneratePlanPayload, PurchaseItemPayload, Quest, ShopItem, User } from "../types";
 
 type SignupInput = {
   nickname: string;
@@ -37,7 +37,6 @@ type AppContextValue = {
   completeQuest: (questId: string) => Promise<CompleteQuestPayload>;
   loadShopItems: () => Promise<void>;
   purchaseItem: (itemId: string) => Promise<PurchaseItemPayload>;
-  updateRoom: (input: RoomUpdatePayload) => Promise<User>;
 };
 
 const AppContext = createContext<AppContextValue | null>(null);
@@ -172,16 +171,6 @@ export function AppProvider({ children }: { children: ReactNode }) {
     }
   };
 
-  const updateRoom = async (input: RoomUpdatePayload) => {
-    try {
-      const response = await api.put<User>("/users/room", input);
-      setUser(response.data);
-      return response.data;
-    } catch (error) {
-      throw new Error(extractApiError(error));
-    }
-  };
-
   return (
     <AppContext.Provider
       value={{
@@ -198,8 +187,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
         generatePlan,
         completeQuest,
         loadShopItems,
-        purchaseItem,
-        updateRoom
+        purchaseItem
       }}
     >
       {children}

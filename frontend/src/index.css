@@ -198,3 +198,335 @@ textarea::placeholder {
     0 12px 28px rgba(156, 176, 198, 0.12),
     inset 0 1px 0 rgba(255, 255, 255, 0.72);
 }
+
+.avatar-stage {
+  position: relative;
+  perspective: 1200px;
+  perspective-origin: 50% 28%;
+}
+
+.avatar-aura {
+  position: absolute;
+  inset: 0;
+  margin: auto;
+  width: 18rem;
+  height: 18rem;
+  filter: blur(12px);
+  pointer-events: none;
+}
+
+.avatar-platform {
+  position: absolute;
+  left: 50%;
+  bottom: 2.75rem;
+  width: 15rem;
+  height: 3.25rem;
+  border-radius: 999px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.82), rgba(212, 225, 240, 0.95));
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.88),
+    0 20px 40px rgba(124, 148, 177, 0.18);
+  transform: translateX(-50%) rotateX(73deg);
+  transform-style: preserve-3d;
+}
+
+.avatar-shadow {
+  position: absolute;
+  left: 50%;
+  bottom: 3.5rem;
+  width: 11rem;
+  height: 2.75rem;
+  border-radius: 999px;
+  background: radial-gradient(circle, rgba(97, 120, 150, 0.28) 0%, rgba(97, 120, 150, 0) 72%);
+  filter: blur(9px);
+  transform: translateX(-50%);
+}
+
+.avatar-orbit {
+  position: relative;
+  height: 21rem;
+  transform-style: preserve-3d;
+  animation: avatar-spin var(--avatar-spin-duration, 16s) linear infinite;
+}
+
+.avatar-character {
+  position: absolute;
+  left: 50%;
+  bottom: calc(3.8rem - var(--avatar-vertical-offset, 0px));
+  width: 220px;
+  height: 320px;
+  transform: translateX(-50%) rotateX(-10deg) scale(var(--avatar-character-scale, 1));
+  transform-style: preserve-3d;
+}
+
+.avatar-box {
+  position: absolute;
+  width: var(--box-width);
+  height: var(--box-height);
+  transform-style: preserve-3d;
+}
+
+.avatar-face {
+  position: absolute;
+  inset: 0;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.28);
+}
+
+.avatar-face-front,
+.avatar-face-back {
+  background: linear-gradient(180deg, color-mix(in srgb, var(--box-front) 92%, white 8%), var(--box-front));
+}
+
+.avatar-face-right,
+.avatar-face-left {
+  width: var(--box-depth);
+  background: linear-gradient(180deg, color-mix(in srgb, var(--box-side) 90%, white 10%), var(--box-side));
+}
+
+.avatar-face-top,
+.avatar-face-bottom {
+  height: var(--box-depth);
+  background: linear-gradient(180deg, color-mix(in srgb, var(--box-top) 94%, white 6%), var(--box-top));
+}
+
+.avatar-face-front {
+  transform: translateZ(calc(var(--box-depth) / 2));
+}
+
+.avatar-face-back {
+  transform: rotateY(180deg) translateZ(calc(var(--box-depth) / 2));
+}
+
+.avatar-face-right {
+  transform-origin: right center;
+  transform: rotateY(90deg) translateZ(calc(var(--box-width) - (var(--box-depth) / 2)));
+}
+
+.avatar-face-left {
+  transform-origin: left center;
+  transform: rotateY(-90deg) translateZ(calc(var(--box-depth) / 2));
+}
+
+.avatar-face-top {
+  transform-origin: center top;
+  transform: rotateX(90deg) translateZ(calc(var(--box-depth) / 2));
+}
+
+.avatar-face-bottom {
+  transform-origin: center bottom;
+  transform: rotateX(-90deg) translateZ(calc(var(--box-height) - (var(--box-depth) / 2)));
+}
+
+.avatar-head {
+  left: 73px;
+  top: 18px;
+}
+
+.avatar-hair-cap {
+  left: 68px;
+  top: -2px;
+  border-radius: 1.25rem 1.25rem 0.75rem 0.75rem;
+}
+
+.avatar-fringe {
+  left: 71px;
+  top: 22px;
+}
+
+.avatar-side-panel-left {
+  left: 55px;
+  top: 18px;
+}
+
+.avatar-side-panel-right {
+  right: 55px;
+  top: 18px;
+}
+
+.avatar-wave-tail {
+  left: 79px;
+  top: 30px;
+  transform: translateZ(-28px);
+}
+
+.avatar-torso {
+  left: 58px;
+  top: 102px;
+}
+
+.avatar-arm {
+  top: 108px;
+}
+
+.avatar-arm-left {
+  left: 24px;
+  transform: rotateZ(8deg) translateZ(6px);
+}
+
+.avatar-arm-right {
+  right: 24px;
+  transform: rotateZ(-8deg) translateZ(6px);
+}
+
+.avatar-shoulder {
+  top: 102px;
+}
+
+.avatar-shoulder-left {
+  left: 37px;
+}
+
+.avatar-shoulder-right {
+  right: 37px;
+}
+
+.avatar-leg {
+  top: 215px;
+}
+
+.avatar-leg-left {
+  left: 72px;
+}
+
+.avatar-leg-right {
+  right: 72px;
+}
+
+.avatar-shoe {
+  top: 314px;
+}
+
+.avatar-shoe-left {
+  left: 62px;
+}
+
+.avatar-shoe-right {
+  right: 62px;
+}
+
+.avatar-face-detail {
+  position: absolute;
+  z-index: 2;
+  transform: translateZ(35px);
+}
+
+.avatar-eye {
+  top: 29px;
+  width: 0.8rem;
+  height: 0.8rem;
+  border-radius: 999px;
+  background: rgba(54, 81, 105, 0.82);
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.18);
+}
+
+.avatar-eye-left {
+  left: 17px;
+}
+
+.avatar-eye-right {
+  right: 17px;
+}
+
+.avatar-mouth {
+  left: 50%;
+  bottom: 18px;
+  width: 1.75rem;
+  height: 0.6rem;
+  border-bottom: 3px solid rgba(83, 97, 120, 0.68);
+  border-radius: 0 0 999px 999px;
+  transform: translateX(-50%) translateZ(35px);
+}
+
+.avatar-visor {
+  left: 10px;
+  right: 10px;
+  top: 24px;
+  height: 1.45rem;
+  border-radius: 999px;
+  background: linear-gradient(90deg, rgba(94, 218, 175, 0.9), rgba(190, 255, 235, 0.88));
+  box-shadow:
+    0 0 14px rgba(98, 210, 179, 0.24),
+    inset 0 1px 0 rgba(255, 255, 255, 0.42);
+}
+
+.avatar-chest-panel {
+  position: absolute;
+  left: 50%;
+  top: 10px;
+  width: 42px;
+  height: calc(100% - 20px);
+  border-radius: 999px;
+  transform: translateX(-50%) translateZ(32px);
+}
+
+.avatar-badge {
+  position: absolute;
+  top: 24px;
+  right: 22px;
+  width: 1rem;
+  height: 1rem;
+  border-radius: 999px;
+  background: linear-gradient(180deg, #fef08a, #f59e0b);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.58),
+    0 8px 20px rgba(237, 174, 74, 0.22);
+  transform: translateZ(34px);
+}
+
+.avatar-charm {
+  position: absolute;
+  left: 50%;
+  top: 16px;
+  width: 0.95rem;
+  height: 2.3rem;
+  border-radius: 999px;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.4),
+    0 10px 20px rgba(115, 148, 190, 0.12);
+  transform: translateX(-50%) translateZ(34px);
+}
+
+.avatar-charm::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: -0.35rem;
+  width: 1.1rem;
+  height: 1.1rem;
+  border-radius: 999px;
+  background: inherit;
+  transform: translateX(-50%);
+}
+
+.avatar-ring {
+  position: absolute;
+  left: 50%;
+  top: 120px;
+  width: 138px;
+  height: 46px;
+  border: 3px solid;
+  border-radius: 999px;
+  box-shadow: 0 0 18px rgba(255, 255, 255, 0.28);
+  transform: translateX(-50%) translateZ(44px) rotateX(72deg);
+}
+
+@keyframes avatar-spin {
+  from {
+    transform: rotateY(-18deg);
+  }
+
+  50% {
+    transform: rotateY(18deg);
+  }
+
+  to {
+    transform: rotateY(342deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .avatar-orbit {
+    animation: none;
+  }
+}

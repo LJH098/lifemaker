@@ -60,7 +60,7 @@ export function PlazaPage() {
   };
 
   return (
-    <div className="grid gap-6 xl:grid-cols-[0.9fr_1.1fr]">
+    <div className="grid gap-6 xl:grid-cols-[0.62fr_1.38fr]">
       <section className="rounded-[32px] liquid-panel p-6">
         <div className="flex items-center gap-3">
           <Users className="text-sky-400" />

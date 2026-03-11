@@ -1,151 +1,58 @@
-import { useEffect, useMemo, useState } from "react";
-import { Home, Lock, Sparkles, Sofa, Sticker } from "lucide-react";
-import { useApp } from "../context/AppContext";
-import { RoomPlacement, ShopItem } from "../types";
-import { AvatarStage, FurnitureArtwork, getItemFlavor } from "../components/LifeGameArt";
+import { ArrowLeft, Settings2 } from "lucide-react";
+import { Link } from "react-router-dom";
 
-const ROOM_SLOTS = [
-  { id: "slot-1", x: 18, y: 72, layer: 1, label: "Left Corner" },
-  { id: "slot-2", x: 34, y: 61, layer: 2, label: "Window Side" },
-  { id: "slot-3", x: 51, y: 78, layer: 0, label: "Center Floor" },
-  { id: "slot-4", x: 68, y: 61, layer: 2, label: "Poster Wall" },
-  { id: "slot-5", x: 84, y: 72, layer: 1, label: "Right Corner" }
+const decorSlots = ["Desk", "Lamp", "Poster", "Plant"];
+const recentVisitors = ["민서", "하준", "유나"];
+const guestbookEntries = [
+  { name: "민서", message: "방 분위기 너무 좋다. 집중 잘 될 것 같아.", time: "방금" },
+  { name: "하준", message: "Desk Lamp 업그레이드하면 더 예쁠 듯.", time: "12분 전" }
 ];
 
 export function RoomPage() {
-  const { user, shopItems, loadShopItems, updateRoom } = useApp();
-  const [title, setTitle] = useState("");
-  const [isPublic, setIsPublic] = useState(true);
-  const [wallTheme, setWallTheme] = useState("mint");
-  const [floorTheme, setFloorTheme] = useState("wood");
-  const [placements, setPlacements] = useState<RoomPlacement[]>([]);
-  const [selectedFurnitureId, setSelectedFurnitureId] = useState<string | null>(null);
-  const [hoveredFurnitureId, setHoveredFurnitureId] = useState<string | null>(null);
-  const [hoveredSlotId, setHoveredSlotId] = useState<string | null>(null);
-  const [message, setMessage] = useState("");
-  const [saving, setSaving] = useState(false);
-
-  useEffect(() => {
-    if (shopItems.length === 0) {
-      void loadShopItems().catch(() => undefined);
-    }
-  }, [loadShopItems, shopItems.length]);
-
-  useEffect(() => {
-    if (!user) {
-      return;
-    }
-
-    setTitle(user.room.title);
-    setIsPublic(user.room.isPublic);
-    setWallTheme(user.room.wallTheme);
-    setFloorTheme(user.room.floorTheme);
-    setPlacements(user.room.placements);
-  }, [user]);
-
-  const ownedFurniture = useMemo(() => {
-    if (!user) {
-      return [];
-    }
-
-    const ownedIds = new Set(user.ownedItemIds);
-    return shopItems.filter((item) => ownedIds.has(item.itemId) && item.type === "room_furniture");
-  }, [shopItems, user]);
-
-  const selectedFurniture = ownedFurniture.find((item) => item.itemId === selectedFurnitureId) ?? null;
-  const hoveredFurniture = ownedFurniture.find((item) => item.itemId === hoveredFurnitureId) ?? null;
-  const spotlightFurniture = hoveredFurniture ?? selectedFurniture ?? ownedFurniture[0] ?? null;
-
-  if (!user) {
-    return null;
-  }
-
-  const placeFurniture = (slot: (typeof ROOM_SLOTS)[number]) => {
-    if (!selectedFurnitureId) {
-      setPlacements((prev) => prev.filter((item) => !(item.x === slot.x && item.y === slot.y)));
-      return;
-    }
-
-    setPlacements((prev) => {
-      const withoutSlot = prev.filter((item) => !(item.x === slot.x && item.y === slot.y));
-      const withoutDuplicate = withoutSlot.filter((item) => item.itemId !== selectedFurnitureId);
-      return [...withoutDuplicate, { itemId: selectedFurnitureId, x: slot.x, y: slot.y, layer: slot.layer }];
-    });
-  };
-
-  const saveRoom = async () => {
-    setSaving(true);
-    setMessage("");
-
-    try {
-      await updateRoom({ title, isPublic, wallTheme, floorTheme, placements });
-      setMessage("Miniroom saved. Your current layout is now live.");
-    } catch (error) {
-      setMessage(error instanceof Error ? error.message : "Could not save room changes.");
-    } finally {
-      setSaving(false);
-    }
-  };
-
   return (
-    <div className="grid gap-6 xl:grid-cols-[1.15fr_0.85fr]">
-      <section className="rounded-[32px] liquid-panel p-6">
-        <div className="flex flex-wrap items-start justify-between gap-3">
+    <div className="grid gap-6 xl:grid-cols-[1.28fr_0.72fr]">
+      <section className="overflow-hidden rounded-[32px] liquid-panel">
+        <div className="flex flex-wrap items-start justify-between gap-4 px-6 pt-6">
           <div>
             <p className="font-display text-3xl text-ink">My Room</p>
-            <p className="mt-2 text-slate-600">Build a cozy minihome. Select furniture on the right, hover an empty slot, and place it into the room.</p>
+            <p className="mt-2 text-slate-600">집중과 회복을 위한 개인 공간입니다. 친구를 초대하거나 공개 상태를 전환할 수 있습니다.</p>
           </div>
-          <div className="rounded-2xl border border-accent/30 bg-accent/10 px-3 py-2 text-xs font-semibold text-accent">Minihome Mode</div>
+          <Link
+            to="/room/settings"
+            className="inline-flex items-center gap-2 rounded-2xl bg-white/60 px-4 py-3 text-sm font-semibold text-slate-700 transition hover:bg-white/80 hover:text-ink"
+          >
+            <Settings2 size={16} />
+            방 설정 열기
+          </Link>
         </div>
+        <div className="mt-5 rounded-t-[30px] bg-[linear-gradient(180deg,rgba(255,255,255,0.22),rgba(255,255,255,0.08))] p-5">
+          <div className="relative min-h-[500px] overflow-hidden rounded-[28px] border border-white/35 bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.68),rgba(225,235,244,0.86)_42%,rgba(205,219,235,0.96)_100%)] p-8 shadow-[inset_0_1px_0_rgba(255,255,255,0.42)]">
+            <div className="absolute inset-x-0 bottom-0 h-32 bg-[linear-gradient(180deg,rgba(189,206,220,0)_0%,rgba(189,206,220,0.48)_35%,rgba(172,192,209,0.82)_100%)]" />
+            <div className="absolute left-8 top-8 h-24 w-24 rounded-full bg-white/35 blur-2xl" />
+            <div className="absolute right-10 top-12 h-20 w-20 rounded-full bg-sky-100/60 blur-xl" />
 
-        <div className={`mt-6 overflow-hidden rounded-[30px] p-5 ${getWallThemeClass(wallTheme)}`}>
-          <div className="relative h-[460px] rounded-[28px] border border-white/35 bg-white/20 shadow-[inset_0_1px_0_rgba(255,255,255,0.55)] backdrop-blur">
-            <div className={`absolute inset-x-0 bottom-0 h-[34%] rounded-b-[28px] ${getFloorThemeClass(floorTheme)}`} />
-            <div className="absolute left-8 top-10 h-28 w-20 rounded-[24px] border border-white/45 bg-white/35" />
-            <div className="absolute left-12 top-14 h-20 w-12 rounded-[18px] bg-sky-200/65" />
-            <div className="absolute right-10 top-8 rounded-full bg-white/55 px-4 py-2 text-xs font-semibold text-slate-600 shadow-sm">
-              {isPublic ? "Public Room" : "Private Room"}
-            </div>
-            <div className="absolute right-8 top-20 h-24 w-28 rounded-[26px] border border-white/45 bg-white/35" />
-            <div className="absolute right-16 top-28 h-2 w-12 rounded-full bg-slate-300/70" />
+            <div className="relative flex h-full min-h-[420px] flex-col justify-between">
+              <div className="flex items-start justify-between gap-4">
+                <div className="rounded-2xl border border-white/45 bg-white/35 px-4 py-3 text-sm text-slate-600 backdrop-blur">
+                  상태: Public / 친구 초대 가능 / 집중 모드 ON
+                </div>
+                <div className="rounded-2xl border border-white/45 bg-white/35 px-4 py-3 text-sm text-slate-600 backdrop-blur">
+                  Rest bonus +12
+                </div>
+              </div>
 
-            <div className="absolute left-[42%] top-[39%] z-20 -translate-x-1/2">
-              <AvatarStage avatar={user.avatar} compact className="bg-transparent p-0 shadow-none" />
-              <div className="-mt-3 rounded-full bg-white/70 px-4 py-2 text-center text-xs font-semibold text-slate-700 shadow-sm">{user.nickname}</div>
-            </div>
+              <div className="relative mx-auto w-full max-w-3xl flex-1">
+                <div className="absolute bottom-24 left-[5%] h-[8.5rem] w-[6.5rem] rounded-t-[48px] rounded-b-[20px] bg-[linear-gradient(180deg,rgba(171,208,234,0.95),rgba(137,179,211,0.96))] shadow-[0_18px_40px_rgba(105,139,171,0.18)]" />
+                <div className="absolute bottom-24 left-[14%] h-20 w-8 rounded-full bg-white/55" />
+                <div className="absolute bottom-24 left-[27%] h-[10.5rem] w-[13rem] rounded-[34px] bg-[linear-gradient(180deg,rgba(255,255,255,0.76),rgba(221,232,242,0.92))] shadow-[0_26px_50px_rgba(109,140,171,0.16)]" />
+                <div className="absolute bottom-[14.5rem] left-[35%] h-4 w-28 rounded-full bg-slate-200/80" />
+                <div className="absolute bottom-24 left-[60%] h-[7.5rem] w-[7.5rem] rounded-[34px] bg-[linear-gradient(180deg,rgba(255,242,205,0.9),rgba(237,214,151,0.92))] shadow-[0_18px_36px_rgba(191,164,95,0.18)]" />
+                <div className="absolute bottom-[11rem] left-[67%] h-10 w-10 rounded-full bg-white/65" />
+                <div className="absolute bottom-24 right-[5%] h-[9.5rem] w-[6.5rem] rounded-[30px] bg-[linear-gradient(180deg,rgba(220,229,242,0.96),rgba(181,197,220,0.96))] shadow-[0_18px_34px_rgba(123,144,171,0.18)]" />
+                <div className="absolute bottom-[16rem] right-[7%] h-12 w-12 rounded-full bg-emerald-100/85 shadow-[0_10px_24px_rgba(132,181,160,0.22)]" />
 
-            {ROOM_SLOTS.map((slot) => {
-              const placed = placements.find((item) => item.x === slot.x && item.y === slot.y);
-              const shopItem = placed ? ownedFurniture.find((item) => item.itemId === placed.itemId) : undefined;
-              const shouldShowGhost = !shopItem && !!selectedFurniture && hoveredSlotId === slot.id;
-
-              return (
-                <button
-                  key={slot.id}
-                  type="button"
-                  onClick={() => placeFurniture(slot)}
-                  onMouseEnter={() => setHoveredSlotId(slot.id)}
-                  onMouseLeave={() => setHoveredSlotId(null)}
-                  className="absolute -translate-x-1/2 -translate-y-1/2"
-                  style={{ left: `${slot.x}%`, top: `${slot.y}%`, zIndex: 10 + slot.layer }}
-                  title={slot.label}
-                >
-                  {shopItem ? (
-                    <FurnitureArtwork item={shopItem} compact className="rounded-[24px] border border-white/45 bg-white/52 shadow-[0_10px_26px_rgba(148,163,184,0.2)]" />
-                  ) : shouldShowGhost && selectedFurniture ? (
-                    <FurnitureArtwork item={selectedFurniture} compact ghost className="rounded-[24px] border border-dashed border-white/70 bg-white/25" />
-                  ) : (
-                    <div className="grid h-24 w-24 place-items-center rounded-[24px] border border-dashed border-white/60 bg-white/15 text-[10px] font-semibold uppercase tracking-[0.24em] text-slate-500">
-                      Place
-                    </div>
-                  )}
-                </button>
-              );
-            })}
-
-            <div className="absolute left-6 top-6 rounded-[22px] bg-white/60 px-4 py-3 shadow-sm">
-              <p className="text-sm font-semibold text-ink">{title || `${user.nickname}'s Mini Room`}</p>
-              <p className="mt-1 text-xs text-slate-600">Click a slot to place or remove furniture.</p>
+                <div className="absolute bottom-10 left-1/2 h-28 w-28 -translate-x-1/2 rounded-[34px] bg-[linear-gradient(180deg,rgba(179,213,236,0.95),rgba(142,188,219,0.96))] shadow-[0_18px_32px_rgba(96,134,167,0.22)]" />
+              </div>
             </div>
           </div>
         </div>
@@ -153,150 +60,92 @@ export function RoomPage() {
 
       <section className="space-y-4">
         <div className="rounded-[32px] liquid-panel p-6">
-          <div className="flex items-center gap-2">
-            <Home size={18} className="text-accent" />
-            <p className="font-display text-xl text-ink">Room Settings</p>
-          </div>
-          <div className="mt-4 space-y-4">
-            <label className="block">
-              <span className="mb-2 block text-sm text-slate-600">Room Title</span>
-              <input value={title} onChange={(event) => setTitle(event.target.value)} className="w-full rounded-2xl liquid-input px-4 py-3 outline-none" />
-            </label>
-            <div className="grid gap-3 md:grid-cols-2">
-              <label className="block">
-                <span className="mb-2 block text-sm text-slate-600">Wall Theme</span>
-                <select value={wallTheme} onChange={(event) => setWallTheme(event.target.value)} className="w-full rounded-2xl liquid-input px-4 py-3 outline-none">
-                  <option value="mint">Mint Glass</option>
-                  <option value="sunset">Sunset Peach</option>
-                  <option value="sky">Sky Blue</option>
-                </select>
-              </label>
-              <label className="block">
-                <span className="mb-2 block text-sm text-slate-600">Floor Theme</span>
-                <select value={floorTheme} onChange={(event) => setFloorTheme(event.target.value)} className="w-full rounded-2xl liquid-input px-4 py-3 outline-none">
-                  <option value="wood">Wood Floor</option>
-                  <option value="cloud">Cloud Mat</option>
-                  <option value="check">Checker Tile</option>
-                </select>
-              </label>
-            </div>
-            <button
-              type="button"
-              onClick={() => setIsPublic((prev) => !prev)}
-              className="flex w-full items-center justify-between rounded-2xl liquid-input px-4 py-3 text-sm text-slate-600"
-            >
-              <span className="flex items-center gap-2">
-                {isPublic ? <Sparkles size={16} className="text-accent" /> : <Lock size={16} className="text-slate-500" />}
-                Visibility
-              </span>
-              <span className="font-semibold text-ink">{isPublic ? "Public" : "Private"}</span>
-            </button>
-          </div>
-        </div>
-
-        <div className="rounded-[32px] liquid-panel p-6">
-          <div className="flex items-center gap-2">
-            <Sofa size={18} className="text-reward" />
-            <p className="font-display text-xl text-ink">Furniture Shelf</p>
-          </div>
-          <p className="mt-2 text-sm text-slate-600">Choose a piece, inspect it here, then click an empty room slot to place it.</p>
-
-          <div className="mt-4 rounded-[28px] bg-white/55 p-4">
-            {spotlightFurniture ? (
-              <div className="grid gap-4 md:grid-cols-[120px_1fr]">
-                <FurnitureArtwork item={spotlightFurniture} compact className="rounded-[24px] bg-white/80" />
-                <div>
-                  <p className="text-lg font-semibold text-ink">{spotlightFurniture.name}</p>
-                  <p className="mt-1 text-xs uppercase tracking-[0.22em] text-slate-400">
-                    {hoveredFurniture ? "Previewing" : selectedFurniture ? "Selected" : "Owned furniture"}
-                  </p>
-                  <p className="mt-3 text-sm leading-relaxed text-slate-600">{getItemFlavor(spotlightFurniture)}</p>
-                </div>
+          <p className="font-display text-xl text-ink">Room Activity</p>
+          <div className="mt-4 space-y-3 text-sm text-slate-600">
+            <div className="rounded-2xl liquid-panel-soft p-4">
+              <p>최근 방문한 친구 {recentVisitors.length}명</p>
+              <div className="mt-3 flex flex-wrap gap-2">
+                {recentVisitors.map((name) => (
+                  <span key={name} className="rounded-full border border-white/40 bg-white/35 px-3 py-1 text-xs text-slate-600">
+                    {name}
+                  </span>
+                ))}
               </div>
-            ) : (
-              <p className="text-sm text-slate-500">Buy furniture in the shop to start decorating your room.</p>
-            )}
-          </div>
-
-          <div className="mt-4 grid grid-cols-2 gap-3">
-            {ownedFurniture.length === 0 ? (
-              <div className="col-span-2 rounded-2xl bg-white/45 p-4 text-sm text-slate-500">Shop furniture appears here once you own it.</div>
-            ) : (
-              ownedFurniture.map((item) => {
-                const active = selectedFurnitureId === item.itemId;
-                const placed = placements.some((placement) => placement.itemId === item.itemId);
-                return (
-                  <button
-                    key={item.itemId}
-                    type="button"
-                    onClick={() => setSelectedFurnitureId((prev) => (prev === item.itemId ? null : item.itemId))}
-                    onMouseEnter={() => setHoveredFurnitureId(item.itemId)}
-                    onMouseLeave={() => setHoveredFurnitureId(null)}
-                    className={`rounded-[24px] border p-4 text-left transition ${
-                      active ? "border-accent bg-accent/10" : "border-white/45 bg-white/45 hover:bg-white/70"
-                    }`}
-                  >
+            </div>
+            <div className="rounded-2xl liquid-panel-soft p-4">
+              <div className="flex items-center justify-between gap-3">
+                <p className="font-medium text-ink">방명록</p>
+                <span className="text-xs text-slate-500">{guestbookEntries.length} entries</span>
+              </div>
+              <div className="mt-3 space-y-3">
+                {guestbookEntries.map((entry) => (
+                  <div key={`${entry.name}-${entry.time}`} className="rounded-2xl border border-white/35 bg-white/30 px-3 py-3">
                     <div className="flex items-center justify-between gap-3">
-                      <FurnitureArtwork item={item} compact className="rounded-[20px] bg-white/80" />
-                      {placed ? <span className="rounded-full bg-reward/15 px-2 py-1 text-[10px] font-semibold text-reward">Placed</span> : null}
+                      <span className="font-medium text-ink">{entry.name}</span>
+                      <span className="text-xs text-slate-500">{entry.time}</span>
                     </div>
-                    <p className="mt-3 text-sm font-semibold text-ink">{item.name}</p>
-                    <p className="mt-2 text-xs uppercase tracking-[0.18em] text-slate-400">{active ? "Selected" : "Hover to inspect"}</p>
-                  </button>
-                );
-              })
-            )}
+                    <p className="mt-2 text-sm text-slate-600">{entry.message}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
           </div>
-          <button
-            type="button"
-            onClick={() => setSelectedFurnitureId(null)}
-            className="mt-4 w-full rounded-2xl border border-white/45 px-4 py-3 text-sm text-slate-600"
-          >
-            Clear selection and use slot click to remove furniture
-          </button>
-        </div>
-
-        <div className="rounded-[32px] liquid-panel p-6">
-          <div className="flex items-center gap-2">
-            <Sticker size={18} className="text-sky-500" />
-            <p className="font-display text-xl text-ink">Room Notes</p>
-          </div>
-          <p className="mt-3 text-sm leading-relaxed text-slate-600">
-            This MVP uses quick slot placement instead of free dragging, but the room now previews furniture before placement and shows your avatar live inside the scene.
-          </p>
-          {message ? <div className="mt-4 rounded-2xl liquid-input px-4 py-3 text-sm text-slate-600">{message}</div> : null}
-          <button
-            type="button"
-            disabled={saving}
-            onClick={() => void saveRoom()}
-            className="mt-4 w-full rounded-2xl bg-accent px-5 py-3 font-semibold text-[#35516a] disabled:bg-white/60 disabled:text-slate-600"
-          >
-            {saving ? "Saving..." : "Save Mini Room"}
-          </button>
         </div>
       </section>
     </div>
   );
 }
 
-function getWallThemeClass(theme: string) {
-  switch (theme) {
-    case "sunset":
-      return "bg-[linear-gradient(180deg,rgba(255,240,232,0.96),rgba(255,218,208,0.92),rgba(255,236,220,0.96))]";
-    case "sky":
-      return "bg-[linear-gradient(180deg,rgba(226,240,255,0.98),rgba(210,232,255,0.94),rgba(234,246,255,0.96))]";
-    default:
-      return "bg-[linear-gradient(180deg,rgba(239,251,245,0.98),rgba(218,243,236,0.94),rgba(232,245,255,0.96))]";
-  }
-}
+export function RoomSettingsPage() {
+  return (
+    <div className="space-y-6">
+      <div className="flex flex-wrap items-start justify-between gap-4 rounded-[32px] liquid-panel p-6">
+        <div>
+          <p className="font-display text-3xl text-ink">Room Settings</p>
+          <p className="mt-2 text-slate-600">방 공개 범위, 초대 링크, 장식 슬롯을 한 화면에서 조정합니다.</p>
+        </div>
+        <Link
+          to="/room"
+          className="inline-flex items-center gap-2 rounded-2xl bg-white/60 px-4 py-3 text-sm font-semibold text-slate-700 transition hover:bg-white/80 hover:text-ink"
+        >
+          <ArrowLeft size={16} />
+          마이룸으로 돌아가기
+        </Link>
+      </div>
 
-function getFloorThemeClass(theme: string) {
-  switch (theme) {
-    case "cloud":
-      return "bg-[linear-gradient(180deg,rgba(243,247,255,0.9),rgba(228,236,255,0.96))]";
-    case "check":
-      return "bg-[linear-gradient(45deg,rgba(240,240,250,0.95)_25%,rgba(225,230,245,0.95)_25%,rgba(225,230,245,0.95)_50%,rgba(240,240,250,0.95)_50%,rgba(240,240,250,0.95)_75%,rgba(225,230,245,0.95)_75%)] bg-[length:30px_30px]";
-    default:
-      return "bg-[linear-gradient(180deg,rgba(213,184,150,0.95),rgba(188,154,116,0.95))]";
-  }
+      <div className="grid gap-6 xl:grid-cols-[0.9fr_1.1fr]">
+        <section className="space-y-6">
+          <div className="rounded-[32px] liquid-panel p-6">
+            <p className="font-display text-xl text-ink">Room Snapshot</p>
+            <div className="mt-4 space-y-3 text-sm text-slate-600">
+              <div className="rounded-2xl liquid-panel-soft p-4">공개 여부: Public</div>
+              <div className="rounded-2xl liquid-panel-soft p-4">초대 링크: 활성화</div>
+              <div className="rounded-2xl liquid-panel-soft p-4">집중 모드: ON</div>
+            </div>
+          </div>
+
+          <div className="rounded-[32px] liquid-panel p-6">
+          <p className="font-display text-xl text-ink">방 설정</p>
+          <div className="mt-4 space-y-3 text-sm text-slate-600">
+            <div className="rounded-2xl liquid-panel-soft p-4">공개 여부: Public</div>
+            <div className="rounded-2xl liquid-panel-soft p-4">초대 링크: 활성화</div>
+            <div className="rounded-2xl liquid-panel-soft p-4">방명록 채팅: 사용 가능</div>
+            <div className="rounded-2xl liquid-panel-soft p-4">집중 모드: ON</div>
+          </div>
+          </div>
+        </section>
+
+        <section className="rounded-[32px] liquid-panel p-6">
+          <p className="font-display text-xl text-ink">장식 슬롯</p>
+          <div className="mt-4 grid grid-cols-2 gap-3">
+            {decorSlots.map((item) => (
+              <div key={item} className="rounded-2xl liquid-panel-soft p-4 text-center text-sm text-slate-600">
+                {item}
+              </div>
+            ))}
+          </div>
+        </section>
+      </div>
+    </div>
+  );
 }
