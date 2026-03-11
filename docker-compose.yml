@@ -3,6 +3,8 @@ services:
     image: mongo:7
     container_name: lifemaker-mongodb
     restart: unless-stopped
+    env_file:
+      - .env
     environment:
       MONGO_INITDB_ROOT_USERNAME: ${MONGO_ROOT_USERNAME}
       MONGO_INITDB_ROOT_PASSWORD: ${MONGO_ROOT_PASSWORD}
@@ -25,6 +27,8 @@ services:
       context: ./backend
       dockerfile: Dockerfile
     restart: unless-stopped
+    env_file:
+      - .env
     depends_on:
       mongodb:
         condition: service_healthy

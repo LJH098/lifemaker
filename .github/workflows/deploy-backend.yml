@@ -20,14 +20,14 @@ jobs:
 
       - name: Prepare backend env file
         run: |
-          cat <<EOF > .env.backend
+          cat <<EOF > .env
+          APP_PORT=${{ vars.APP_PORT || '8080' }}
           MONGO_ROOT_USERNAME=${{ secrets.MONGO_ROOT_USERNAME }}
           MONGO_ROOT_PASSWORD=${{ secrets.MONGO_ROOT_PASSWORD }}
           MONGO_DATABASE=${{ vars.MONGO_DATABASE || 'lifemaker' }}
           JWT_SECRET=${{ secrets.JWT_SECRET }}
           OPENAI_API_KEY=${{ secrets.OPENAI_API_KEY }}
           OPENAI_MODEL=${{ vars.OPENAI_MODEL || 'gpt-4o-mini' }}
-          APP_PORT=${{ vars.APP_PORT || '8080' }}
           APP_CORS_ALLOWED_ORIGIN_PATTERNS=${{ vars.APP_CORS_ALLOWED_ORIGIN_PATTERNS || 'http://localhost:5173,http://127.0.0.1:5173,https://*.vercel.app' }}
           EOF
 
@@ -37,7 +37,7 @@ jobs:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USERNAME }}
           key: ${{ secrets.EC2_SSH_KEY }}
-          source: "backend,docker-compose.yml,.env.backend"
+          source: "backend,docker-compose.yml,.env"
           target: "~/lifemaker"
           overwrite: true
 
@@ -50,5 +50,5 @@ jobs:
           script: |
             set -eu
             cd ~/lifemaker
-            docker compose --env-file .env.backend -f docker-compose.yml up -d --build --remove-orphans
+            docker compose -f docker-compose.yml up -d --build --remove-orphans
             docker image prune -f
