@@ -25,7 +25,7 @@ public class UserService {
     public User createUser(String nickname, String email, String password) {
         String normalizedEmail = normalizeEmail(email);
         if (userRepository.findByEmail(normalizedEmail).isPresent()) {
-            throw new IllegalArgumentException("이미 가입된 이메일입니다.");
+            throw new IllegalArgumentException("이미 가입한 이메일입니다.");
         }
 
         User user = new User(UUID.randomUUID().toString(), normalizedEmail, nickname, passwordEncoder.encode(password));
@@ -76,6 +76,7 @@ public class UserService {
     }
 
     public User save(User user) {
+        user.setOwnedItemIds(user.getOwnedItemIds());
         return userRepository.save(user);
     }
 

@@ -4,6 +4,9 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Document(collection = "users")
 public class User {
 
@@ -18,6 +21,7 @@ public class User {
     private int coins;
     private Avatar avatar;
     private UserStats stats;
+    private List<String> ownedItemIds;
 
     public User() {
     }
@@ -32,6 +36,7 @@ public class User {
         this.coins = 200;
         this.avatar = Avatar.starter();
         this.stats = UserStats.starter();
+        this.ownedItemIds = new ArrayList<>();
     }
 
     public String getId() {
@@ -104,5 +109,16 @@ public class User {
 
     public void setStats(UserStats stats) {
         this.stats = stats;
+    }
+
+    public List<String> getOwnedItemIds() {
+        if (ownedItemIds == null) {
+            ownedItemIds = new ArrayList<>();
+        }
+        return ownedItemIds;
+    }
+
+    public void setOwnedItemIds(List<String> ownedItemIds) {
+        this.ownedItemIds = ownedItemIds == null ? new ArrayList<>() : new ArrayList<>(ownedItemIds);
     }
 }

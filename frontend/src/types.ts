@@ -24,6 +24,7 @@ export type User = {
   level: number;
   exp: number;
   coins: number;
+  ownedItemIds: string[];
   avatar: Avatar;
   stats: UserStats;
 };
@@ -61,6 +62,8 @@ export type AuthPayload = {
 };
 
 export type GeneratePlanPayload = {
+  source: "ai" | "fallback";
+  sourceReason?: string | null;
   analysis: {
     stage: string;
     focusArea: string;
@@ -77,4 +80,9 @@ export type CompleteQuestPayload = {
   leveledUp: boolean;
   earnedExp: number;
   earnedCoins: number;
+};
+
+export type PurchaseItemPayload = {
+  itemId: string;
+  user: User;
 };

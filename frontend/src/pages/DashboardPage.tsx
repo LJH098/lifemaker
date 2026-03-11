@@ -1,8 +1,8 @@
+import { useState } from "react";
 import { Sparkles, Target, Trophy, UserRound } from "lucide-react";
 import { Link } from "react-router-dom";
 import { QuestCard } from "../components/QuestCard";
 import { useApp } from "../context/AppContext";
-import { useState } from "react";
 
 export function DashboardPage() {
   const { user, quests, completeQuest } = useApp();
@@ -30,9 +30,7 @@ export function DashboardPage() {
         <div className="grid-panel rounded-[32px] border border-slate-800 bg-card p-6">
           <p className="text-sm uppercase tracking-[0.3em] text-accent">Today&apos;s Run</p>
           <h1 className="mt-3 font-display text-4xl font-bold text-white">현실을 플레이하는 메인 대시보드</h1>
-          <p className="mt-3 max-w-2xl text-slate-400">
-            오늘의 퀘스트를 완료하고 레벨을 올리세요. 작은 행동이 곧 캐릭터 성장으로 연결됩니다.
-          </p>
+          <p className="mt-3 max-w-2xl text-slate-400">오늘의 퀘스트를 완료하고 레벨을 올리세요. 작은 행동이 곧 캐릭터 성장으로 연결됩니다.</p>
           <div className="mt-6 grid gap-3 md:grid-cols-3">
             <div className="rounded-3xl bg-slate-900/80 p-4">
               <div className="flex items-center gap-2 text-accent">
@@ -44,7 +42,7 @@ export function DashboardPage() {
             <div className="rounded-3xl bg-slate-900/80 p-4">
               <div className="flex items-center gap-2 text-reward">
                 <Trophy size={16} />
-                완료 누적
+                완료 실적
               </div>
               <p className="mt-3 text-3xl font-bold text-white">{completedCount}</p>
             </div>
@@ -86,7 +84,7 @@ export function DashboardPage() {
           </div>
           {inProgressQuests.length === 0 ? (
             <div className="rounded-3xl border border-dashed border-slate-700 bg-card p-6 text-slate-400">
-              아직 진행 중인 퀘스트가 없습니다. AI 분석에서 새 퀘스트를 생성해보세요.
+              아직 진행 중인 퀘스트가 없습니다. AI Goal Analysis에서 새 퀘스트를 생성해보세요.
             </div>
           ) : (
             inProgressQuests.slice(0, 3).map((quest) => (
@@ -100,8 +98,8 @@ export function DashboardPage() {
             <p className="font-display text-xl text-white">추천 퀘스트</p>
             <div className="mt-4 rounded-3xl bg-slate-900/80 p-4">
               <p className="text-sm text-accent">AI 추천</p>
-              <p className="mt-2 text-lg font-semibold text-white">{inProgressQuests[0]?.title ?? "목표를 입력하고 첫 퀘스트를 생성하세요."}</p>
-              <p className="mt-2 text-sm text-slate-400">{inProgressQuests[0]?.description ?? "현재 상황 분석을 기반으로 AI가 바로 퀘스트를 설계해줍니다."}</p>
+              <p className="mt-2 text-lg font-semibold text-white">{inProgressQuests[0]?.title ?? "목표를 입력하고 첫 퀘스트를 생성해보세요."}</p>
+              <p className="mt-2 text-sm text-slate-400">{inProgressQuests[0]?.description ?? "현재 상황 분석을 기반으로 AI가 바로 실천 가능한 퀘스트를 설계해줍니다."}</p>
             </div>
           </div>
           <div className="rounded-[32px] border border-slate-800 bg-card p-6">

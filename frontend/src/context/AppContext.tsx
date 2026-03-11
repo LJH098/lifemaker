@@ -1,6 +1,6 @@
 import { createContext, ReactNode, useContext, useEffect, useState } from "react";
 import { api, extractApiError } from "../services/api";
-import { AuthPayload, CompleteQuestPayload, GeneratePlanPayload, Quest, User } from "../types";
+import { AuthPayload, CompleteQuestPayload, GeneratePlanPayload, PurchaseItemPayload, Quest, ShopItem, User } from "../types";
 
 type SignupInput = {
   nickname: string;
@@ -25,6 +25,7 @@ type AvatarInput = {
 type AppContextValue = {
   user: User | null;
   quests: Quest[];
+  shopItems: ShopItem[];
   isAuthenticated: boolean;
   loadingSession: boolean;
   login: (input: LoginInput) => Promise<void>;
@@ -34,6 +35,8 @@ type AppContextValue = {
   updateAvatar: (input: AvatarInput) => Promise<User>;
   generatePlan: (goal: string, currentSituation: string) => Promise<GeneratePlanPayload>;
   completeQuest: (questId: string) => Promise<CompleteQuestPayload>;
+  loadShopItems: () => Promise<void>;
+  purchaseItem: (itemId: string) => Promise<PurchaseItemPayload>;
 };
 
 const AppContext = createContext<AppContextValue | null>(null);
@@ -42,6 +45,7 @@ const TOKEN_KEY = "lifemaker-token";
 export function AppProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [quests, setQuests] = useState<Quest[]>([]);
+  const [shopItems, setShopItems] = useState<ShopItem[]>([]);
   const [loadingSession, setLoadingSession] = useState(true);
 
   useEffect(() => {
@@ -56,13 +60,19 @@ export function AppProvider({ children }: { children: ReactNode }) {
     }
 
     try {
-      const [userResponse, questsResponse] = await Promise.all([api.get<User>("/users/me"), api.get<Quest[]>("/quests")]);
+      const [userResponse, questsResponse, shopItemsResponse] = await Promise.all([
+        api.get<User>("/users/me"),
+        api.get<Quest[]>("/quests"),
+        api.get<ShopItem[]>("/shop/items")
+      ]);
       setUser(userResponse.data);
       setQuests(normalizeQuests(questsResponse.data));
+      setShopItems(shopItemsResponse.data);
     } catch {
       localStorage.removeItem(TOKEN_KEY);
       setUser(null);
       setQuests([]);
+      setShopItems([]);
     } finally {
       setLoadingSession(false);
     }
@@ -76,26 +86,31 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const login = async (input: LoginInput) => {
     const response = await api.post<AuthPayload>("/auth/login", input);
     applyAuthPayload(response.data);
-    const questsResponse = await api.get<Quest[]>("/quests");
-    setQuests(normalizeQuests(questsResponse.data));
+    await refreshSession();
   };
 
   const signup = async (input: SignupInput) => {
     const response = await api.post<AuthPayload>("/auth/signup", input);
     applyAuthPayload(response.data);
-    setQuests([]);
+    await refreshSession();
   };
 
   const logout = () => {
     localStorage.removeItem(TOKEN_KEY);
     setUser(null);
     setQuests([]);
+    setShopItems([]);
   };
 
   const refreshSession = async () => {
-    const [userResponse, questsResponse] = await Promise.all([api.get<User>("/users/me"), api.get<Quest[]>("/quests")]);
+    const [userResponse, questsResponse, shopItemsResponse] = await Promise.all([
+      api.get<User>("/users/me"),
+      api.get<Quest[]>("/quests"),
+      api.get<ShopItem[]>("/shop/items")
+    ]);
     setUser(userResponse.data);
     setQuests(normalizeQuests(questsResponse.data));
+    setShopItems(shopItemsResponse.data);
   };
 
   const updateAvatar = async (input: AvatarInput) => {
@@ -137,11 +152,31 @@ export function AppProvider({ children }: { children: ReactNode }) {
     }
   };
 
+  const loadShopItems = async () => {
+    try {
+      const response = await api.get<ShopItem[]>("/shop/items");
+      setShopItems(response.data);
+    } catch (error) {
+      throw new Error(extractApiError(error));
+    }
+  };
+
+  const purchaseItem = async (itemId: string) => {
+    try {
+      const response = await api.post<PurchaseItemPayload>(`/shop/purchase/${itemId}`);
+      setUser(response.data.user);
+      return response.data;
+    } catch (error) {
+      throw new Error(extractApiError(error));
+    }
+  };
+
   return (
     <AppContext.Provider
       value={{
         user,
         quests,
+        shopItems,
         isAuthenticated: !!user,
         loadingSession,
         login,
@@ -150,7 +185,9 @@ export function AppProvider({ children }: { children: ReactNode }) {
         refreshSession,
         updateAvatar,
         generatePlan,
-        completeQuest
+        completeQuest,
+        loadShopItems,
+        purchaseItem
       }}
     >
       {children}

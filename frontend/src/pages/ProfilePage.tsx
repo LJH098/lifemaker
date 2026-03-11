@@ -16,7 +16,7 @@ export function ProfilePage() {
           <div className="rounded-2xl bg-slate-900/80 p-4">Level {user.level}</div>
           <div className="rounded-2xl bg-slate-900/80 p-4">{user.coins} Coins</div>
           <div className="rounded-2xl bg-slate-900/80 p-4">{user.exp} EXP</div>
-          <div className="rounded-2xl bg-slate-900/80 p-4">총 퀘스트 {quests.length}개</div>
+          <div className="rounded-2xl bg-slate-900/80 p-4">총 퀘스트 수 {quests.length}개</div>
         </div>
       </section>
       <section className="rounded-[32px] border border-slate-800 bg-card p-6">

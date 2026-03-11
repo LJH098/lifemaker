@@ -1,12 +1,63 @@
+import { useEffect, useRef, useState } from "react";
 import { Send, Users } from "lucide-react";
-import { useState } from "react";
 import { useApp } from "../context/AppContext";
 import { mockChat } from "../data/mockData";
+import { connectChat, type ChatConnection } from "../services/chat";
+import { ChatMessage } from "../types";
 
 export function PlazaPage() {
   const { user } = useApp();
-  const [messages, setMessages] = useState(mockChat);
+  const [messages, setMessages] = useState<ChatMessage[]>(mockChat);
   const [draft, setDraft] = useState("");
+  const [connected, setConnected] = useState(false);
+  const [error, setError] = useState("");
+  const connectionRef = useRef<ChatConnection | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    void connectChat("plaza", (message) => {
+      setMessages((prev) => [...prev, message]);
+      setConnected(true);
+    })
+      .then((connection) => {
+        if (cancelled) {
+          connection.disconnect();
+          return;
+        }
+        connectionRef.current = connection;
+        setError("");
+        setConnected(true);
+      })
+      .catch((connectError) => {
+        if (cancelled) {
+          return;
+        }
+        setConnected(false);
+        setError(connectError instanceof Error ? connectError.message : "채팅 서버에 연결하지 못했습니다.");
+      });
+
+    return () => {
+      cancelled = true;
+      connectionRef.current?.disconnect();
+      connectionRef.current = null;
+      setConnected(false);
+    };
+  }, []);
+
+  const handleSend = () => {
+    if (!draft.trim() || !user || !connectionRef.current) {
+      return;
+    }
+
+    connectionRef.current.send({
+      senderNickname: user.nickname,
+      content: draft.trim(),
+      roomId: "plaza",
+      sentAt: ""
+    });
+    setDraft("");
+  };
 
   return (
     <div className="grid gap-6 xl:grid-cols-[0.9fr_1.1fr]">
@@ -15,9 +66,13 @@ export function PlazaPage() {
           <Users className="text-sky-400" />
           <h1 className="font-display text-2xl text-white">Social Plaza</h1>
         </div>
-        <p className="mt-3 text-slate-400">지금 접속한 플레이어와 대화하고 서로의 성장 상태를 구경하세요.</p>
+        <p className="mt-3 text-slate-400">지금 접속 중인 플레이어를 보고, 서로의 성장 상태를 가볍게 살펴보세요.</p>
+        <div className="mt-4 rounded-2xl border border-slate-800 bg-slate-900/70 px-4 py-3 text-sm text-slate-400">
+          채팅 상태: <span className={connected ? "text-accent" : "text-amber-300"}>{connected ? "실시간 연결됨" : "연결 중..."}</span>
+        </div>
+        {error && <div className="mt-3 rounded-2xl border border-rose-500/30 bg-rose-500/10 px-4 py-3 text-sm text-rose-200">{error}</div>}
         <div className="mt-6 grid gap-3">
-          {["FlowMage", "AlgoKnight", "MorningHealer", "QuestRunner"].map((name, index) => (
+          {["FlowMage", "AlgoKnight", "MorningHealer", user?.nickname ?? "QuestRunner"].map((name, index) => (
             <div key={name} className="flex items-center justify-between rounded-2xl bg-slate-900/80 p-4">
               <div className="flex items-center gap-3">
                 <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-accent/20 text-accent">{name[0]}</div>
@@ -36,7 +91,7 @@ export function PlazaPage() {
         <p className="font-display text-2xl text-white">Plaza Chat</p>
         <div className="mt-4 h-[420px] space-y-3 overflow-y-auto rounded-[28px] bg-slate-900/80 p-4">
           {messages.map((message, index) => (
-            <div key={`${message.sentAt}-${index}`} className="rounded-2xl bg-slate-800/80 p-4">
+            <div key={`${message.sentAt}-${index}-${message.senderNickname}`} className="rounded-2xl bg-slate-800/80 p-4">
               <div className="flex items-center justify-between text-sm">
                 <span className="font-semibold text-white">{message.senderNickname}</span>
                 <span className="text-slate-500">{message.sentAt}</span>
@@ -49,17 +104,16 @@ export function PlazaPage() {
           <input
             value={draft}
             onChange={(event) => setDraft(event.target.value)}
-            className="flex-1 rounded-2xl border border-slate-700 bg-slate-900 px-4 py-3 outline-none"
-            placeholder="광장에 메시지를 보내세요"
-          />
-          <button
-            className="rounded-2xl bg-accent px-4 py-3 text-slate-950"
-            onClick={() => {
-              if (!draft.trim()) return;
-              setMessages((prev) => [...prev, { senderNickname: user?.nickname ?? "QuestRunner", content: draft, roomId: "plaza", sentAt: "방금" }]);
-              setDraft("");
+            onKeyDown={(event) => {
+              if (event.key === "Enter") {
+                event.preventDefault();
+                handleSend();
+              }
             }}
-          >
+            className="flex-1 rounded-2xl border border-slate-700 bg-slate-900 px-4 py-3 outline-none"
+            placeholder="광장에 메시지를 보내보세요"
+          />
+          <button className="rounded-2xl bg-accent px-4 py-3 text-slate-950" onClick={handleSend}>
             <Send size={18} />
           </button>
         </div>

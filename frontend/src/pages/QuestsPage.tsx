@@ -24,7 +24,7 @@ export function QuestsPage() {
       <div className="grid gap-4 xl:grid-cols-2">
         {quests.length === 0 ? (
           <div className="rounded-3xl border border-dashed border-slate-700 bg-card p-6 text-slate-400">
-            생성된 퀘스트가 없습니다. AI Goal Analysis 탭에서 첫 퀘스트를 만들어보세요.
+            생성된 퀘스트가 없습니다. AI Goal Analysis에서 첫 퀘스트를 만들어보세요.
           </div>
         ) : (
           quests.map((quest) => <QuestCard key={quest.id} quest={quest} onComplete={handleComplete} busy={busyQuestId === quest.id} />)

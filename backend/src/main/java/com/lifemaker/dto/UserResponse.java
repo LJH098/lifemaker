@@ -13,6 +13,7 @@ public record UserResponse(
     int level,
     int exp,
     int coins,
+    List<String> ownedItemIds,
     AvatarResponse avatar,
     UserStatsResponse stats
 ) {
@@ -24,6 +25,7 @@ public record UserResponse(
             user.getLevel(),
             user.getExp(),
             user.getCoins(),
+            List.copyOf(user.getOwnedItemIds()),
             AvatarResponse.from(user.getAvatar()),
             UserStatsResponse.from(user.getStats())
         );
