@@ -22,6 +22,7 @@ services:
       retries: 10
 
   backend:
+    image: ${BACKEND_IMAGE:-lifemaker-backend:local}
     container_name: lifemaker-backend
     build:
       context: ./backend
