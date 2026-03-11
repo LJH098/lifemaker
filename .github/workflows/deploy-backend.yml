@@ -5,10 +5,9 @@ on:
   push:
     branches:
       - main
-      - jun
     paths:
       - "backend/**"
-      - "docker-compose.ec2.yml"
+      - "docker-compose.yml"
       - ".github/workflows/deploy-backend.yml"
 
 jobs:
@@ -22,7 +21,9 @@ jobs:
       - name: Prepare backend env file
         run: |
           cat <<EOF > .env.backend
-          MONGODB_URI=${{ secrets.MONGODB_URI }}
+          MONGO_ROOT_USERNAME=${{ secrets.MONGO_ROOT_USERNAME }}
+          MONGO_ROOT_PASSWORD=${{ secrets.MONGO_ROOT_PASSWORD }}
+          MONGO_DATABASE=${{ vars.MONGO_DATABASE || 'lifemaker' }}
           JWT_SECRET=${{ secrets.JWT_SECRET }}
           OPENAI_API_KEY=${{ secrets.OPENAI_API_KEY }}
           OPENAI_MODEL=${{ vars.OPENAI_MODEL || 'gpt-4o-mini' }}
@@ -36,7 +37,7 @@ jobs:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USERNAME }}
           key: ${{ secrets.EC2_SSH_KEY }}
-          source: "backend,docker-compose.ec2.yml,.env.backend"
+          source: "backend,docker-compose.yml,.env.backend"
           target: "~/lifemaker"
           overwrite: true
 
@@ -49,5 +50,5 @@ jobs:
           script: |
             set -eu
             cd ~/lifemaker
-            docker compose --env-file .env.backend -f docker-compose.ec2.yml up -d --build --remove-orphans
+            docker compose --env-file .env.backend -f docker-compose.yml up -d --build --remove-orphans
             docker image prune -f
