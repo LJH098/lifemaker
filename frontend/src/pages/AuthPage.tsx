@@ -1,6 +1,8 @@
-import { GoogleLogin } from "@react-oauth/google";
-import { Lock, Mail, Swords } from "lucide-react";
-import { Link } from "react-router-dom";
+import { FormEvent, useState } from "react";
+import { Lock, Mail, Swords, UserRound } from "lucide-react";
+import { Link, useNavigate } from "react-router-dom";
+import { useApp } from "../context/AppContext";
+import { extractApiError } from "../services/api";
 
 type Props = {
   mode: "login" | "signup";
@@ -8,6 +10,32 @@ type Props = {
 
 export function AuthPage({ mode }: Props) {
   const isLogin = mode === "login";
+  const navigate = useNavigate();
+  const { login, signup } = useApp();
+  const [nickname, setNickname] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const [submitting, setSubmitting] = useState(false);
+
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    setError("");
+    setSubmitting(true);
+
+    try {
+      if (isLogin) {
+        await login({ email, password });
+      } else {
+        await signup({ nickname, email, password });
+      }
+      navigate("/", { replace: true });
+    } catch (requestError) {
+      setError(extractApiError(requestError));
+    } finally {
+      setSubmitting(false);
+    }
+  };
 
   return (
     <div className="grid min-h-screen lg:grid-cols-2">
@@ -37,41 +65,55 @@ export function AuthPage({ mode }: Props) {
           <p className="font-display text-3xl font-bold text-white">{isLogin ? "로그인" : "회원가입"}</p>
           <p className="mt-2 text-sm text-slate-400">인생게임에 접속해 오늘의 메인 퀘스트를 시작하세요.</p>
 
-          <form className="mt-8 space-y-4">
+          <form className="mt-8 space-y-4" onSubmit={handleSubmit}>
             {!isLogin && (
               <label className="block">
                 <span className="mb-2 block text-sm text-slate-300">닉네임</span>
-                <input className="w-full rounded-2xl border border-slate-700 bg-slate-900 px-4 py-3 outline-none" placeholder="QuestRunner" />
+                <div className="flex items-center rounded-2xl border border-slate-700 bg-slate-900 px-4">
+                  <UserRound size={16} className="text-slate-500" />
+                  <input
+                    value={nickname}
+                    onChange={(event) => setNickname(event.target.value)}
+                    className="w-full bg-transparent px-3 py-3 outline-none"
+                    placeholder="QuestRunner"
+                  />
+                </div>
               </label>
             )}
             <label className="block">
               <span className="mb-2 block text-sm text-slate-300">이메일</span>
               <div className="flex items-center rounded-2xl border border-slate-700 bg-slate-900 px-4">
                 <Mail size={16} className="text-slate-500" />
-                <input className="w-full bg-transparent px-3 py-3 outline-none" placeholder="you@example.com" />
+                <input
+                  type="email"
+                  value={email}
+                  onChange={(event) => setEmail(event.target.value)}
+                  className="w-full bg-transparent px-3 py-3 outline-none"
+                  placeholder="you@example.com"
+                />
               </div>
             </label>
             <label className="block">
               <span className="mb-2 block text-sm text-slate-300">비밀번호</span>
               <div className="flex items-center rounded-2xl border border-slate-700 bg-slate-900 px-4">
                 <Lock size={16} className="text-slate-500" />
-                <input type="password" className="w-full bg-transparent px-3 py-3 outline-none" placeholder="••••••••" />
+                <input
+                  type="password"
+                  value={password}
+                  onChange={(event) => setPassword(event.target.value)}
+                  className="w-full bg-transparent px-3 py-3 outline-none"
+                  placeholder="••••••••"
+                />
               </div>
             </label>
-            <button className="w-full rounded-2xl bg-accent px-4 py-3 font-semibold text-slate-950">
-              {isLogin ? "로그인" : "계정 만들기"}
+            {error && <div className="rounded-2xl border border-rose-500/40 bg-rose-500/10 px-4 py-3 text-sm text-rose-200">{error}</div>}
+            <button
+              disabled={submitting}
+              className="w-full rounded-2xl bg-accent px-4 py-3 font-semibold text-slate-950 disabled:cursor-not-allowed disabled:bg-slate-700 disabled:text-slate-300"
+            >
+              {submitting ? "처리 중..." : isLogin ? "로그인" : "계정 만들기"}
             </button>
           </form>
-
-          <div className="my-6 flex items-center gap-3 text-sm text-slate-500">
-            <div className="h-px flex-1 bg-slate-700" />
-            또는
-            <div className="h-px flex-1 bg-slate-700" />
-          </div>
-
-          <div className="overflow-hidden rounded-2xl">
-            <GoogleLogin onSuccess={(credentialResponse) => console.log(credentialResponse)} onError={() => console.log("Google login failed")} />
-          </div>
 
           <p className="mt-6 text-sm text-slate-400">
             {isLogin ? "처음이신가요?" : "이미 계정이 있나요?"}{" "}

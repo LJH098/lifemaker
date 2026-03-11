@@ -1,102 +1,25 @@
-# 인생게임 (LifeMaker)
+# LifeMaker MVP
 
-해커톤 하루 MVP를 목표로 만든 풀스택 웹앱입니다. 현실 목표를 RPG 퀘스트로 바꾸고, 경험치와 코인, 아바타, 방 꾸미기, 광장 채팅으로 동기부여를 높입니다.
+현실의 나를 투영한 캐릭터를 키우면서 목표를 퀘스트로 달성하는 로컬 MVP입니다.
 
-## 시스템 아키텍처
+## 현재 구현 범위
 
-```text
-Frontend (React + Vite + Tailwind)
-  -> REST API (Spring Boot)
-  -> WebSocket STOMP Chat
-Backend (Spring Boot)
-  -> MongoDB Atlas / Local MongoDB
-  -> OpenAI Responses API
-  -> Google OAuth ID Token Verification
-Deploy
-  Frontend -> Vercel
-  Backend -> AWS EC2
-  Database -> MongoDB Atlas
-```
+- 이메일 회원가입 / 로그인
+- JWT 기반 세션 유지
+- 아바타 생성 및 커스터마이즈
+- 목표 + 현재 상황 입력
+- AI 또는 fallback 로직 기반 목표 분석
+- 분석 결과에 따른 퀘스트 3개 생성
+- 퀘스트 완료 시 EXP / 코인 보상과 레벨업
+- 대시보드, 퀘스트 로그, 프로필, 상점 UI
 
-## 프로젝트 구조
+## 기술 스택
 
-```text
-lifemakerdemo/
-  frontend/   React + TypeScript + Vite + Tailwind UI
-  backend/    Spring Boot REST API + JWT + MongoDB + WebSocket
-  README.md
-```
+- Frontend: React + Vite + TypeScript + Tailwind
+- Backend: Spring Boot 3 + JWT
+- Storage: 메모리 저장소
 
-## 주요 기능
-
-- 이메일/비밀번호 회원가입, 로그인, JWT 인증
-- Google OAuth 로그인 엔드포인트
-- AI 퀘스트 생성 API `POST /api/ai/generateQuest`
-- 퀘스트 생성, 조회, 완료와 레벨업 보상
-- 아바타, 프로필, 마이룸, 상점 데이터 모델
-- 광장 실시간 WebSocket 채팅
-- 모바일/태블릿/데스크톱 대응 UI
-
-## MongoDB 모델
-
-### User
-
-```json
-{
-  "id": "string",
-  "email": "string",
-  "nickname": "string",
-  "password": "string",
-  "provider": "LOCAL | GOOGLE",
-  "level": 1,
-  "exp": 0,
-  "coins": 200,
-  "avatar": {
-    "hair": "Starter Cut",
-    "clothes": "Novice Hoodie",
-    "accessories": ["Beginner Badge"],
-    "colors": {
-      "skin": "#F1C27D",
-      "hair": "#22C55E",
-      "clothes": "#38BDF8"
-    }
-  },
-  "stats": {
-    "focus": 40,
-    "knowledge": 35,
-    "health": 30,
-    "social": 25,
-    "discipline": 38
-  }
-}
-```
-
-### Quest
-
-```json
-{
-  "id": "string",
-  "userId": "string",
-  "title": "string",
-  "description": "string",
-  "rewardExp": 80,
-  "rewardCoin": 120,
-  "status": "in-progress | completed",
-  "progress": 0
-}
-```
-
-### ShopItem
-
-```json
-{
-  "itemId": "string",
-  "name": "string",
-  "type": "hair | clothes | accessories | room_furniture",
-  "price": 280,
-  "image": "PX"
-}
-```
+백엔드는 DB 없이 동작합니다. 서버를 재시작하면 계정과 퀘스트 데이터는 초기화됩니다.
 
 ## 로컬 실행
 
@@ -105,46 +28,70 @@ lifemakerdemo/
 ```bash
 cd frontend
 npm install
-copy .env.example .env
+cp .env.example .env
 npm run dev
 ```
 
 ### 2. Backend
 
+사전 준비:
+
+- Java 17+
+- Maven 3.9+ 또는 `mvn` 명령 사용 가능 환경
+
 ```bash
 cd backend
-copy .env.example .env
+cp .env.example .env
 mvn spring-boot:run
 ```
 
-환경변수는 PowerShell에서 직접 주입해도 됩니다.
-
-```powershell
-$env:MONGODB_URI="mongodb://localhost:27017/lifemaker"
-$env:JWT_SECRET="replace-with-strong-secret"
-$env:OPENAI_API_KEY="sk-..."
-$env:GOOGLE_CLIENT_ID="..."
-$env:GOOGLE_CLIENT_SECRET="..."
-mvn spring-boot:run
-```
-
-## 핵심 API
-
-- `POST /api/auth/signup`
-- `POST /api/auth/login`
-- `POST /api/auth/google`
-- `GET /api/users/me`
-- `GET /api/quests`
-- `POST /api/quests`
-- `POST /api/quests/{questId}/complete`
-- `POST /api/ai/generateQuest`
-- `GET /api/shop/items`
-- `GET /api/rooms/me`
-- WebSocket endpoint: `/ws-chat`
+OpenAI 키가 없어도 앱은 동작합니다. 이 경우 백엔드는 휴리스틱 기반으로 목표를 분석하고 퀘스트를 생성합니다.
 
 ## 배포 메모
 
-- 프론트엔드는 Vercel에 `frontend` 폴더 기준 배포
-- 백엔드는 EC2에서 Java 17, Maven, 환경변수 세팅 후 실행
-- MongoDB Atlas URI를 `MONGODB_URI`에 연결
-- OpenAI 키가 없으면 AI 퀘스트는 안전한 fallback 로직으로 동작
+### Frontend
+
+- `frontend`는 Vercel preview 배포 기준으로 동작합니다.
+- React Router 직접 접근을 위해 [frontend/vercel.json](/Users/jinhyuk/krafton/lifemaker/frontend/vercel.json) 이 포함되어 있습니다.
+- 운영 배포에서는 `VITE_API_URL`을 백엔드 HTTPS 주소 또는 프록시 경로로 맞춰야 합니다.
+
+### Backend
+
+- [backend/Dockerfile](/Users/jinhyuk/krafton/lifemaker/backend/Dockerfile) 로 이미지 빌드
+- [docker-compose.ec2.yml](/Users/jinhyuk/krafton/lifemaker/docker-compose.ec2.yml) 로 EC2 실행
+- [.github/workflows/deploy-backend.yml](/Users/jinhyuk/krafton/lifemaker/.github/workflows/deploy-backend.yml) 이 GitHub Actions 배포 워크플로
+
+GitHub Secrets:
+
+- `EC2_HOST`
+- `EC2_USERNAME`
+- `EC2_SSH_KEY`
+- `MONGODB_URI`
+- `JWT_SECRET`
+- `OPENAI_API_KEY` (선택)
+
+GitHub Variables:
+
+- `APP_PORT`
+- `OPENAI_MODEL`
+- `APP_CORS_ALLOWED_ORIGIN_PATTERNS`
+
+운영 단계에서는 EC2 백엔드에 HTTPS를 붙이거나, Vercel 측 프록시를 두는 것이 필요합니다.
+
+## 주요 API
+
+- `POST /api/auth/signup`
+- `POST /api/auth/login`
+- `GET /api/users/me`
+- `PUT /api/users/avatar`
+- `GET /api/quests`
+- `POST /api/quests/{questId}/complete`
+- `POST /api/ai/generate-plan`
+
+## 테스트 시나리오
+
+1. `/signup`에서 계정을 만듭니다.
+2. `/avatar`에서 캐릭터 외형을 저장합니다.
+3. `/ai-quests`에서 목표와 현재 상황을 입력합니다.
+4. 생성된 퀘스트가 `/quests`와 대시보드에 반영되는지 확인합니다.
+5. 퀘스트를 완료해 코인, EXP, 레벨이 오르는지 확인합니다.

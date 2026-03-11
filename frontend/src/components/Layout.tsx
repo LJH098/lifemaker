@@ -1,11 +1,11 @@
-import { Bell, Coins, Home, ScrollText, Sparkles, Store, User, Users, WandSparkles } from "lucide-react";
-import { NavLink, Outlet } from "react-router-dom";
-import { mockUser } from "../data/mockData";
+import { Bell, Coins, Home, LogOut, ScrollText, Sparkles, Store, User, Users, WandSparkles } from "lucide-react";
+import { NavLink, Outlet, useNavigate } from "react-router-dom";
+import { useApp } from "../context/AppContext";
 
 const navItems = [
   { label: "Dashboard", path: "/", icon: Home },
-  { label: "Quests", path: "/quests", icon: ScrollText },
-  { label: "AI Goal Analysis", path: "/ai-quests", icon: WandSparkles },
+  { label: "Quest Log", path: "/quests", icon: ScrollText },
+  { label: "AI Plan", path: "/ai-quests", icon: WandSparkles },
   { label: "Plaza", path: "/plaza", icon: Users },
   { label: "My Room", path: "/room", icon: Sparkles },
   { label: "Avatar", path: "/avatar", icon: User },
@@ -14,7 +14,15 @@ const navItems = [
 ];
 
 export function Layout() {
-  const expProgress = Math.min((mockUser.exp / 800) * 100, 100);
+  const { user, logout } = useApp();
+  const navigate = useNavigate();
+
+  if (!user) {
+    return null;
+  }
+
+  const currentLevelFloor = (user.level - 1) * 300;
+  const expProgress = Math.min(((user.exp - currentLevelFloor) / 300) * 100, 100);
 
   return (
     <div className="min-h-screen bg-night text-ink">
@@ -46,12 +54,12 @@ export function Layout() {
           <header className="sticky top-0 z-10 flex flex-wrap items-center gap-4 border-b border-slate-800 bg-slate-950/80 px-4 py-4 backdrop-blur lg:px-8">
             <div className="flex min-w-[220px] flex-1 items-center gap-4 rounded-2xl bg-card px-4 py-3">
               <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-accent/20 text-lg font-bold text-accent">
-                {mockUser.nickname.slice(0, 1)}
+                {user.nickname.slice(0, 1)}
               </div>
               <div className="flex-1">
                 <div className="flex items-center justify-between text-sm">
-                  <span>{mockUser.nickname}</span>
-                  <span>Lv. {mockUser.level}</span>
+                  <span>{user.nickname}</span>
+                  <span>Lv. {user.level}</span>
                 </div>
                 <div className="mt-2 h-2 rounded-full bg-slate-700">
                   <div className="h-2 rounded-full bg-accent" style={{ width: `${expProgress}%` }} />
@@ -60,10 +68,20 @@ export function Layout() {
             </div>
             <div className="flex items-center gap-3 rounded-2xl bg-card px-4 py-3 text-reward">
               <Coins size={18} />
-              <span className="font-semibold">{mockUser.coins}</span>
+              <span className="font-semibold">{user.coins}</span>
             </div>
             <button className="rounded-2xl bg-card p-3 text-slate-300 transition hover:text-white">
               <Bell size={18} />
+            </button>
+            <button
+              className="flex items-center gap-2 rounded-2xl bg-card px-4 py-3 text-slate-300 transition hover:text-white"
+              onClick={() => {
+                logout();
+                navigate("/login", { replace: true });
+              }}
+            >
+              <LogOut size={16} />
+              로그아웃
             </button>
           </header>
           <main className="flex-1 p-4 lg:p-8">

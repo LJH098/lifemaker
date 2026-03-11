@@ -1,0 +1,53 @@
+name: Deploy Backend to EC2
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+      - jun
+    paths:
+      - "backend/**"
+      - "docker-compose.ec2.yml"
+      - ".github/workflows/deploy-backend.yml"
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Prepare backend env file
+        run: |
+          cat <<EOF > .env.backend
+          MONGODB_URI=${{ secrets.MONGODB_URI }}
+          JWT_SECRET=${{ secrets.JWT_SECRET }}
+          OPENAI_API_KEY=${{ secrets.OPENAI_API_KEY }}
+          OPENAI_MODEL=${{ vars.OPENAI_MODEL || 'gpt-4o-mini' }}
+          APP_PORT=${{ vars.APP_PORT || '8080' }}
+          APP_CORS_ALLOWED_ORIGIN_PATTERNS=${{ vars.APP_CORS_ALLOWED_ORIGIN_PATTERNS || 'http://localhost:5173,http://127.0.0.1:5173,https://*.vercel.app' }}
+          EOF
+
+      - name: Copy files to EC2
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USERNAME }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          source: "backend,docker-compose.ec2.yml,.env.backend"
+          target: "~/lifemaker"
+          overwrite: true
+
+      - name: Deploy on EC2
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USERNAME }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          script: |
+            set -eu
+            cd ~/lifemaker
+            docker compose --env-file .env.backend -f docker-compose.ec2.yml up -d --build --remove-orphans
+            docker image prune -f

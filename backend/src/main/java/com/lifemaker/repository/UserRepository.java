@@ -1,8 +1,9 @@
 package com.lifemaker.repository;
 
 import com.lifemaker.model.User;
-import java.util.Optional;
 import org.springframework.data.mongodb.repository.MongoRepository;
+
+import java.util.Optional;
 
 public interface UserRepository extends MongoRepository<User, String> {
     Optional<User> findByEmail(String email);

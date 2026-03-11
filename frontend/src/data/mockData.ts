@@ -34,7 +34,9 @@ export const mockQuests: Quest[] = [
     rewardExp: 80,
     rewardCoin: 120,
     status: "in-progress",
-    progress: 65
+    progress: 65,
+    category: "학습",
+    difficulty: "보통"
   },
   {
     id: "q-2",
@@ -43,7 +45,9 @@ export const mockQuests: Quest[] = [
     rewardExp: 120,
     rewardCoin: 180,
     status: "in-progress",
-    progress: 40
+    progress: 40,
+    category: "실행",
+    difficulty: "어려움"
   },
   {
     id: "q-3",
@@ -52,7 +56,9 @@ export const mockQuests: Quest[] = [
     rewardExp: 60,
     rewardCoin: 90,
     status: "completed",
-    progress: 100
+    progress: 100,
+    category: "학습",
+    difficulty: "쉬움"
   }
 ];
 

@@ -1,8 +1,10 @@
 import { Send, Users } from "lucide-react";
 import { useState } from "react";
+import { useApp } from "../context/AppContext";
 import { mockChat } from "../data/mockData";
 
 export function PlazaPage() {
+  const { user } = useApp();
   const [messages, setMessages] = useState(mockChat);
   const [draft, setDraft] = useState("");
 
@@ -54,7 +56,7 @@ export function PlazaPage() {
             className="rounded-2xl bg-accent px-4 py-3 text-slate-950"
             onClick={() => {
               if (!draft.trim()) return;
-              setMessages((prev) => [...prev, { senderNickname: "QuestRunner", content: draft, roomId: "plaza", sentAt: "방금" }]);
+              setMessages((prev) => [...prev, { senderNickname: user?.nickname ?? "QuestRunner", content: draft, roomId: "plaza", sentAt: "방금" }]);
               setDraft("");
             }}
           >

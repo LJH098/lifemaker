@@ -34,8 +34,10 @@ export type Quest = {
   description: string;
   rewardExp: number;
   rewardCoin: number;
-  status: "in-progress" | "completed";
+  status: "in_progress" | "completed" | "in-progress";
   progress: number;
+  category: string;
+  difficulty: string;
 };
 
 export type ShopItem = {
@@ -51,4 +53,28 @@ export type ChatMessage = {
   content: string;
   roomId: string;
   sentAt: string;
+};
+
+export type AuthPayload = {
+  token: string;
+  user: User;
+};
+
+export type GeneratePlanPayload = {
+  analysis: {
+    stage: string;
+    focusArea: string;
+    reasoning: string;
+    caution: string;
+    suggestedRoutine: string;
+  };
+  quests: Quest[];
+};
+
+export type CompleteQuestPayload = {
+  quest: Quest;
+  user: User;
+  leveledUp: boolean;
+  earnedExp: number;
+  earnedCoins: number;
 };
