@@ -23,6 +23,9 @@ public class ChatController {
         message.setSentAt(LocalTime.now().format(DateTimeFormatter.ofPattern("HH:mm")));
         String roomId = message.getRoomId() == null || message.getRoomId().isBlank() ? "plaza" : message.getRoomId();
         message.setRoomId(roomId);
+        if (message.getType() == null || message.getType().isBlank()) {
+            message.setType("CHAT");
+        }
         messagingTemplate.convertAndSend("/topic/chat/" + roomId, message);
     }
 }
