@@ -91,6 +91,7 @@ export function Layout() {
                       clothesColor={user.avatar.colors.clothes}
                       showCaption={false}
                       spinDurationSeconds={28}
+                      variant="embedded"
                     />
                   </div>
                 </div>

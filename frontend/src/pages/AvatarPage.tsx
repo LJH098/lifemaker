@@ -1,9 +1,24 @@
-import { FormEvent, useEffect, useState } from "react";
+import { FormEvent, useEffect, useMemo, useState } from "react";
 import { AvatarPreview3D } from "../components/AvatarPreview3D";
 import { useApp } from "../context/AppContext";
 import { mockItems } from "../data/mockData";
 
-const hairOptions = ["Starter Cut", "Cyber Cut", "Wave Rider", "Guild Buzz"];
+type HairOption = {
+  name: string;
+  note: string;
+  previewColor?: string;
+};
+
+const hairOptions: HairOption[] = [
+  { name: "Starter Cut", note: "Clean and balanced everyday cut" },
+  { name: "Soft Crop", note: "Short top with a calmer front line" },
+  { name: "City Layer", note: "Neat layered shape with a soft side" },
+  { name: "Wave Rider", note: "Light texture with a subtle sweep" },
+  { name: "Guild Buzz", note: "Ultra simple close-cropped style" },
+  { name: "Cyber Cut", note: "Sharper line with a modern accent" },
+  { name: "Street Snapback", note: "Cap silhouette for casual builds" }
+];
+
 const clothesOptions = ["Novice Hoodie", "Explorer Jacket", "Focus Armor", "Guild Uniform"];
 const accessoryOptions = ["Beginner Badge", "Focus Charm", "Green Visor", "Lucky Ring"];
 
@@ -13,7 +28,7 @@ export function AvatarPage() {
   const [clothes, setClothes] = useState("Novice Hoodie");
   const [accessories, setAccessories] = useState<string[]>(["Beginner Badge"]);
   const [skinColor, setSkinColor] = useState("#F1C27D");
-  const [hairColor, setHairColor] = useState("#22C55E");
+  const [hairColor, setHairColor] = useState("#6b7280");
   const [clothesColor, setClothesColor] = useState("#38BDF8");
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState("");
@@ -29,6 +44,8 @@ export function AvatarPage() {
     setHairColor(user.avatar.colors.hair);
     setClothesColor(user.avatar.colors.clothes);
   }, [user]);
+
+  const activeHair = useMemo(() => hairOptions.find((option) => option.name === hair) ?? hairOptions[0], [hair]);
 
   if (!user) {
     return null;
@@ -52,9 +69,9 @@ export function AvatarPage() {
     setMessage("");
     try {
       await updateAvatar({ hair, clothes, accessories, skinColor, hairColor, clothesColor });
-      setMessage("아바타 설정이 저장되었습니다.");
+      setMessage("Avatar settings saved.");
     } catch (error) {
-      setMessage(error instanceof Error ? error.message : "저장에 실패했습니다.");
+      setMessage(error instanceof Error ? error.message : "Could not save avatar.");
     } finally {
       setSaving(false);
     }
@@ -67,14 +84,14 @@ export function AvatarPage() {
           <div className="flex items-center justify-between gap-4">
             <div>
               <p className="font-display text-3xl text-ink">Avatar Studio</p>
-              <p className="mt-2 text-sm text-slate-600">커스터마이즈와 아이템 쇼핑을 한 화면에서 진행합니다.</p>
+              <p className="mt-2 text-sm text-slate-600">Tune your character live and save the look you want to bring into My Room and Plaza.</p>
             </div>
             <div className="rounded-2xl liquid-panel-soft px-4 py-3 text-right text-sm text-slate-600">
               <p>Coins</p>
               <p className="mt-1 text-lg font-semibold text-reward">{user.coins}</p>
             </div>
           </div>
-          <div className="mt-6 flex min-h-[420px] items-center justify-center overflow-hidden rounded-[28px] liquid-panel-soft">
+          <div className="mt-6 flex min-h-[460px] items-center justify-center overflow-hidden rounded-[28px] liquid-panel-soft">
             <div className="w-full max-w-md px-4 py-6">
               <AvatarPreview3D
                 nickname={user.nickname}
@@ -84,33 +101,54 @@ export function AvatarPage() {
                 skinColor={skinColor}
                 hairColor={hairColor}
                 clothesColor={clothesColor}
-                characterScale={0.82}
-                verticalOffset={34}
+                characterScale={0.94}
+                verticalOffset={0}
               />
-              <p className="mt-4 text-center text-sm text-slate-600">{accessories.join(", ") || "액세서리 없음"}</p>
+              <p className="mt-4 text-center text-sm text-slate-600">{accessories.join(", ") || "No accessories selected"}</p>
               <div className="mt-5 grid grid-cols-2 gap-3 text-left text-xs text-slate-600">
                 <div className="rounded-2xl bg-white/35 px-4 py-3">Hair: {hair}</div>
                 <div className="rounded-2xl bg-white/35 px-4 py-3">Clothes: {clothes}</div>
-                <div className="rounded-2xl bg-white/35 px-4 py-3">Skin: {skinColor}</div>
+                <div className="rounded-2xl bg-white/35 px-4 py-3">Style: {activeHair.note}</div>
                 <div className="rounded-2xl bg-white/35 px-4 py-3">Hair Color: {hairColor}</div>
               </div>
             </div>
           </div>
         </section>
+
         <section className="rounded-[32px] liquid-panel p-6">
           <p className="font-display text-2xl text-ink">Customize</p>
-          <form className="mt-6 space-y-5" onSubmit={handleSubmit}>
+          <form className="mt-6 space-y-6" onSubmit={handleSubmit}>
+            <div>
+              <div className="flex items-center justify-between gap-3">
+                <span className="text-sm font-semibold text-slate-600">Hair Presets</span>
+                <span className="text-xs text-slate-500">Click any style to preview instantly</span>
+              </div>
+              <div className="mt-3 grid gap-3 md:grid-cols-2">
+                {hairOptions.map((option) => {
+                  const active = option.name === hair;
+                  return (
+                    <button
+                      key={option.name}
+                      type="button"
+                      onClick={() => setHair(option.name)}
+                      className={`rounded-[24px] border px-4 py-4 text-left transition ${
+                        active ? "border-accent bg-accent/10 shadow-glow" : "border-white/45 bg-white/35 hover:bg-white/55"
+                      }`}
+                    >
+                      <div className="flex items-center justify-between gap-3">
+                        <div>
+                          <p className="text-sm font-semibold text-ink">{option.name}</p>
+                          <p className="mt-1 text-xs text-slate-500">{option.note}</p>
+                        </div>
+                        {active ? <span className="rounded-full bg-accent/15 px-2 py-1 text-[10px] font-semibold text-accent">LIVE</span> : null}
+                      </div>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
             <div className="grid gap-4 md:grid-cols-2">
-              <label className="block">
-                <span className="mb-2 block text-sm text-slate-600">Hair</span>
-                <select value={hair} onChange={(event) => setHair(event.target.value)} className="w-full rounded-2xl liquid-input px-4 py-3">
-                  {hairOptions.map((option) => (
-                    <option key={option} value={option}>
-                      {option}
-                    </option>
-                  ))}
-                </select>
-              </label>
               <label className="block">
                 <span className="mb-2 block text-sm text-slate-600">Clothes</span>
                 <select value={clothes} onChange={(event) => setClothes(event.target.value)} className="w-full rounded-2xl liquid-input px-4 py-3">
@@ -121,9 +159,14 @@ export function AvatarPage() {
                   ))}
                 </select>
               </label>
+              <div className="rounded-[24px] liquid-panel-soft px-4 py-4">
+                <p className="text-sm font-semibold text-ink">Live appearance</p>
+                <p className="mt-2 text-sm text-slate-600">Every click changes the 3D preview immediately, so you can compare styles before saving.</p>
+              </div>
             </div>
+
             <div>
-              <p className="mb-2 text-sm text-slate-600">Accessories (최대 3개)</p>
+              <p className="mb-2 text-sm text-slate-600">Accessories (up to 3)</p>
               <div className="flex flex-wrap gap-3">
                 {accessoryOptions.map((option) => {
                   const active = accessories.includes(option);
@@ -142,6 +185,7 @@ export function AvatarPage() {
                 })}
               </div>
             </div>
+
             <div className="grid gap-4 md:grid-cols-3">
               <label className="block">
                 <span className="mb-2 block text-sm text-slate-600">Skin Color</span>
@@ -156,9 +200,11 @@ export function AvatarPage() {
                 <input type="color" value={clothesColor} onChange={(event) => setClothesColor(event.target.value)} className="h-14 w-full rounded-2xl liquid-input p-2" />
               </label>
             </div>
-            {message && <div className="rounded-2xl liquid-input px-4 py-3 text-sm text-slate-600">{message}</div>}
+
+            {message ? <div className="rounded-2xl liquid-input px-4 py-3 text-sm text-slate-600">{message}</div> : null}
+
             <button disabled={saving} className="rounded-2xl bg-accent px-5 py-3 font-semibold text-[#35516a] disabled:bg-white/60 disabled:text-slate-600">
-              {saving ? "저장 중..." : "아바타 저장"}
+              {saving ? "Saving..." : "Save avatar"}
             </button>
           </form>
         </section>
@@ -168,9 +214,9 @@ export function AvatarPage() {
         <div className="flex flex-wrap items-center justify-between gap-4">
           <div>
             <p className="font-display text-2xl text-ink">Style Shop</p>
-            <p className="mt-2 text-sm text-slate-600">아바타와 방 꾸미기 아이템을 같은 흐름에서 바로 둘러봅니다.</p>
+            <p className="mt-2 text-sm text-slate-600">Quick glance at cosmetics and room items connected to your current look loop.</p>
           </div>
-          <div className="rounded-2xl liquid-panel-soft px-4 py-3 text-sm text-slate-600">보유 코인: {user.coins}</div>
+          <div className="rounded-2xl liquid-panel-soft px-4 py-3 text-sm text-slate-600">Owned coins: {user.coins}</div>
         </div>
         <div className="mt-6 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
           {mockItems.map((item) => (

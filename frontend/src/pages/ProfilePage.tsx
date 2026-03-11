@@ -1,5 +1,6 @@
 import { FormEvent, useEffect, useState } from "react";
 import { BellRing, LockKeyhole, Mail, ShieldCheck, UserRound } from "lucide-react";
+import { AvatarPreview3D } from "../components/AvatarPreview3D";
 import { useApp } from "../context/AppContext";
 
 const PROFILE_DRAFT_KEY = "lifemaker.profile-settings-draft";
@@ -20,7 +21,7 @@ type ProfileDraft = {
 const defaultDraft = (nickname: string, email: string): ProfileDraft => ({
   nickname,
   email,
-  bio: "꾸준히 성장하는 루틴을 만들고 있어요.",
+  bio: "Building a calmer daily rhythm and leveling up one quest at a time.",
   timezone: "Asia/Seoul",
   visibility: "friends",
   questReminders: true,
@@ -74,17 +75,17 @@ export function ProfilePage() {
     event.preventDefault();
 
     if (draft.newPassword && !draft.currentPassword) {
-      setMessage("비밀번호를 변경하려면 현재 비밀번호를 입력해 주세요.");
+      setMessage("Enter your current password before setting a new one.");
       return;
     }
 
     if (draft.newPassword && draft.newPassword.length < 8) {
-      setMessage("비밀번호는 8자 이상으로 입력해 주세요.");
+      setMessage("New password must be at least 8 characters.");
       return;
     }
 
     if (draft.newPassword !== draft.confirmPassword) {
-      setMessage("새 비밀번호와 확인 비밀번호가 일치하지 않습니다.");
+      setMessage("New password and confirmation do not match.");
       return;
     }
 
@@ -105,7 +106,7 @@ export function ProfilePage() {
         confirmPassword: ""
       });
       setSaving(false);
-      setMessage("프론트 미리보기용 개인정보 수정 사항을 저장했습니다.");
+      setMessage("Profile draft saved locally.");
     }, 220);
   };
 
@@ -113,25 +114,53 @@ export function ProfilePage() {
     const nextDraft = defaultDraft(user.nickname, user.email);
     localStorage.removeItem(PROFILE_DRAFT_KEY);
     setDraft(nextDraft);
-    setMessage("저장된 프론트 미리보기 설정을 초기화했습니다.");
+    setMessage("Profile draft reset.");
   };
 
   return (
-    <div className="rounded-[32px] liquid-panel p-6">
-      <div className="flex items-center justify-between gap-4">
-        <div>
-          <p className="font-display text-3xl text-ink">Profile Settings</p>
-          <p className="mt-2 text-sm text-slate-600">닉네임, 이메일, 공개 범위와 알림 옵션을 프론트에서 먼저 편집해볼 수 있습니다.</p>
+    <div className="grid gap-6 xl:grid-cols-[0.84fr_1.16fr]">
+      <section className="rounded-[32px] liquid-panel p-6">
+        <div className="flex items-start justify-between gap-4">
+          <div>
+            <p className="font-display text-3xl text-ink">Profile</p>
+            <p className="mt-2 text-sm text-slate-600">Your current identity card, avatar look, and notification preferences.</p>
+          </div>
+          <span className="rounded-full border border-white/45 bg-white/35 px-4 py-2 text-xs font-semibold tracking-[0.18em] text-slate-500">
+            FRONT ONLY
+          </span>
         </div>
-        <span className="rounded-full border border-white/45 bg-white/35 px-4 py-2 text-xs font-semibold tracking-[0.18em] text-slate-500">
-          FRONT ONLY
-        </span>
-      </div>
 
-      <form className="mt-6 space-y-5" onSubmit={handleSubmit}>
+        <div className="mt-6 rounded-[28px] liquid-panel-soft p-5">
+          <div className="mx-auto max-w-[260px]">
+            <AvatarPreview3D
+              nickname={user.nickname}
+              hair={user.avatar.hair}
+              clothes={user.avatar.clothes}
+              accessories={user.avatar.accessories}
+              skinColor={user.avatar.colors.skin}
+              hairColor={user.avatar.colors.hair}
+              clothesColor={user.avatar.colors.clothes}
+              characterScale={0.92}
+              verticalOffset={0}
+            />
+          </div>
+          <div className="mt-5 grid gap-3 text-sm text-slate-600">
+            <div className="rounded-2xl bg-white/40 px-4 py-3">Nickname: {user.nickname}</div>
+            <div className="rounded-2xl bg-white/40 px-4 py-3">Level: {user.level}</div>
+            <div className="rounded-2xl bg-white/40 px-4 py-3">Main hair: {user.avatar.hair}</div>
+            <div className="rounded-2xl bg-white/40 px-4 py-3">Room invite: {user.room.inviteCode}</div>
+          </div>
+        </div>
+      </section>
+
+      <section className="rounded-[32px] liquid-panel p-6">
+        <p className="font-display text-3xl text-ink">Profile Settings</p>
+        <p className="mt-2 text-sm text-slate-600">Nickname, email, visibility, and local notification preferences.</p>
+
+        <form className="mt-6 space-y-5" onSubmit={handleSubmit}>
           <div className="grid gap-4 md:grid-cols-2">
             <label className="block">
-              <span className="mb-2 block text-sm text-slate-600">닉네임</span>
+              <span className="mb-2 block text-sm text-slate-600">Nickname</span>
               <div className="flex items-center rounded-2xl liquid-input px-4">
                 <UserRound size={16} className="text-slate-500" />
                 <input
@@ -144,7 +173,7 @@ export function ProfilePage() {
             </label>
 
             <label className="block">
-              <span className="mb-2 block text-sm text-slate-600">이메일</span>
+              <span className="mb-2 block text-sm text-slate-600">Email</span>
               <div className="flex items-center rounded-2xl liquid-input px-4">
                 <Mail size={16} className="text-slate-500" />
                 <input
@@ -159,19 +188,19 @@ export function ProfilePage() {
           </div>
 
           <label className="block">
-            <span className="mb-2 block text-sm text-slate-600">자기소개</span>
+            <span className="mb-2 block text-sm text-slate-600">Bio</span>
             <textarea
               value={draft.bio}
               onChange={(event) => updateDraft("bio", event.target.value)}
               rows={4}
               className="w-full rounded-[24px] liquid-input px-4 py-3 outline-none"
-              placeholder="나를 소개하는 짧은 문장을 입력하세요."
+              placeholder="Tell other players what you are working on."
             />
           </label>
 
           <div className="grid gap-4 md:grid-cols-2">
             <label className="block">
-              <span className="mb-2 block text-sm text-slate-600">시간대</span>
+              <span className="mb-2 block text-sm text-slate-600">Timezone</span>
               <select
                 value={draft.timezone}
                 onChange={(event) => updateDraft("timezone", event.target.value)}
@@ -185,15 +214,15 @@ export function ProfilePage() {
             </label>
 
             <label className="block">
-              <span className="mb-2 block text-sm text-slate-600">프로필 공개 범위</span>
+              <span className="mb-2 block text-sm text-slate-600">Visibility</span>
               <select
                 value={draft.visibility}
                 onChange={(event) => updateDraft("visibility", event.target.value as ProfileDraft["visibility"])}
                 className="w-full rounded-2xl liquid-input px-4 py-3"
               >
-                <option value="public">전체 공개</option>
-                <option value="friends">친구만</option>
-                <option value="private">비공개</option>
+                <option value="public">Public</option>
+                <option value="friends">Friends</option>
+                <option value="private">Private</option>
               </select>
             </label>
           </div>
@@ -201,13 +230,13 @@ export function ProfilePage() {
           <div>
             <div className="flex items-center gap-2">
               <LockKeyhole size={18} className="text-slate-500" />
-              <p className="text-lg font-semibold text-ink">비밀번호 변경</p>
+              <p className="text-lg font-semibold text-ink">Password</p>
             </div>
-            <p className="mt-2 text-sm text-slate-600">프론트 미리보기용 입력 영역입니다. 저장 시 현재 비밀번호 입력 여부와 새 비밀번호 일치 여부만 확인합니다.</p>
+            <p className="mt-2 text-sm text-slate-600">Front-only validation for the MVP profile screen.</p>
 
             <div className="mt-4 grid gap-4 md:grid-cols-3">
               <label className="block">
-                <span className="mb-2 block text-sm text-slate-600">현재 비밀번호</span>
+                <span className="mb-2 block text-sm text-slate-600">Current password</span>
                 <div className="flex items-center rounded-2xl liquid-input px-4">
                   <LockKeyhole size={16} className="text-slate-500" />
                   <input
@@ -215,13 +244,13 @@ export function ProfilePage() {
                     value={draft.currentPassword}
                     onChange={(event) => updateDraft("currentPassword", event.target.value)}
                     className="w-full bg-transparent px-3 py-3 outline-none"
-                    placeholder="현재 비밀번호"
+                    placeholder="Current password"
                   />
                 </div>
               </label>
 
               <label className="block">
-                <span className="mb-2 block text-sm text-slate-600">새 비밀번호</span>
+                <span className="mb-2 block text-sm text-slate-600">New password</span>
                 <div className="flex items-center rounded-2xl liquid-input px-4">
                   <LockKeyhole size={16} className="text-slate-500" />
                   <input
@@ -229,13 +258,13 @@ export function ProfilePage() {
                     value={draft.newPassword}
                     onChange={(event) => updateDraft("newPassword", event.target.value)}
                     className="w-full bg-transparent px-3 py-3 outline-none"
-                    placeholder="8자 이상 입력"
+                    placeholder="At least 8 characters"
                   />
                 </div>
               </label>
 
               <label className="block">
-                <span className="mb-2 block text-sm text-slate-600">비밀번호 확인</span>
+                <span className="mb-2 block text-sm text-slate-600">Confirm password</span>
                 <div className="flex items-center rounded-2xl liquid-input px-4">
                   <ShieldCheck size={16} className="text-slate-500" />
                   <input
@@ -243,7 +272,7 @@ export function ProfilePage() {
                     value={draft.confirmPassword}
                     onChange={(event) => updateDraft("confirmPassword", event.target.value)}
                     className="w-full bg-transparent px-3 py-3 outline-none"
-                    placeholder="비밀번호 재입력"
+                    placeholder="Repeat new password"
                   />
                 </div>
               </label>
@@ -253,8 +282,8 @@ export function ProfilePage() {
           <div className="grid gap-3">
             <label className="flex items-start justify-between gap-4 rounded-[24px] liquid-panel-soft px-4 py-4">
               <div>
-                <p className="font-medium text-ink">퀘스트 알림</p>
-                <p className="mt-1 text-sm text-slate-600">아침 루틴과 마감 퀘스트 리마인드를 받습니다.</p>
+                <p className="font-medium text-ink">Quest reminders</p>
+                <p className="mt-1 text-sm text-slate-600">Receive reminders for daily quests and focus windows.</p>
               </div>
               <input
                 type="checkbox"
@@ -268,9 +297,9 @@ export function ProfilePage() {
               <div>
                 <div className="flex items-center gap-2">
                   <BellRing size={16} className="text-slate-500" />
-                  <p className="font-medium text-ink">주간 요약 메일</p>
+                  <p className="font-medium text-ink">Weekly summary mail</p>
                 </div>
-                <p className="mt-1 text-sm text-slate-600">일주일 성취와 추천 루틴을 이메일 요약으로 받습니다.</p>
+                <p className="mt-1 text-sm text-slate-600">Receive a compact weekly digest of quests and stats.</p>
               </div>
               <input
                 type="checkbox"
@@ -289,17 +318,18 @@ export function ProfilePage() {
               disabled={saving}
               className="rounded-2xl bg-accent px-5 py-3 font-semibold text-[#35516a] disabled:bg-white/60 disabled:text-slate-600"
             >
-              {saving ? "저장 중..." : "변경사항 저장"}
+              {saving ? "Saving..." : "Save changes"}
             </button>
             <button
               type="button"
               onClick={handleReset}
               className="rounded-2xl border border-white/45 bg-white/35 px-5 py-3 font-semibold text-slate-600 transition hover:bg-white/55 hover:text-ink"
             >
-              초기화
+              Reset
             </button>
           </div>
-      </form>
+        </form>
+      </section>
     </div>
   );
 }

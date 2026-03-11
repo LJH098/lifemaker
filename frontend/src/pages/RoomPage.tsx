@@ -423,7 +423,7 @@ export function RoomPage() {
               </div>
             ) : null}
 
-            <div className="absolute bottom-[66px] left-1/2 z-20 -translate-x-1/2 scale-[0.78]">
+            <div className="absolute bottom-[18px] left-1/2 z-20 -translate-x-1/2 scale-[0.8]">
               <AvatarPreview3D
                 nickname={roomUser.nickname}
                 hair={roomUser.avatar.hair}
@@ -434,8 +434,9 @@ export function RoomPage() {
                 clothesColor={roomUser.avatar.colors.clothes}
                 showCaption={false}
                 spinDurationSeconds={18}
-                characterScale={0.9}
-                verticalOffset={16}
+                characterScale={1.04}
+                verticalOffset={0}
+                variant="embedded"
               />
             </div>
             <div className="absolute bottom-[32px] left-1/2 z-20 -translate-x-1/2 rounded-full bg-white/70 px-4 py-2 text-xs font-semibold text-slate-700 shadow-sm">
