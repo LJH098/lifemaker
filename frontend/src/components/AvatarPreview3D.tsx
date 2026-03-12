@@ -1,34 +1,29 @@
 import { Canvas, useFrame } from "@react-three/fiber";
 import { ContactShadows, OrbitControls, RoundedBox } from "@react-three/drei";
 import { useMemo, useRef } from "react";
-import { Group } from "three";
+import { Group, MathUtils } from "three";
 
-type AvatarPreview3DProps = {
-  nickname: string;
+type Variant = "studio" | "embedded" | "plaza";
+type MovementState = "idle" | "walk";
+
+export type AvatarRigProps = {
   hair: string;
   clothes: string;
   accessories: string[];
   skinColor: string;
   hairColor: string;
   clothesColor: string;
-  showCaption?: boolean;
   spinDurationSeconds?: number;
   characterScale?: number;
   verticalOffset?: number;
-  variant?: "studio" | "embedded";
+  variant?: Variant;
+  movementState?: MovementState;
+  facingDirection?: number;
 };
 
-type AvatarModelProps = {
-  hair: string;
-  clothes: string;
-  accessories: string[];
-  skinColor: string;
-  hairColor: string;
-  clothesColor: string;
-  spinDurationSeconds: number;
-  characterScale: number;
-  verticalOffset: number;
-  variant: "studio" | "embedded";
+type AvatarPreview3DProps = AvatarRigProps & {
+  nickname: string;
+  showCaption?: boolean;
 };
 
 function normalizeHexColor(hex: string) {
@@ -107,40 +102,43 @@ function outfitVariant(clothes: string) {
   }
 }
 
-function AvatarModel({
+export function AvatarRig({
   hair,
   clothes,
   accessories,
   skinColor,
   hairColor,
   clothesColor,
-  spinDurationSeconds,
-  characterScale,
-  verticalOffset,
-  variant
-}: AvatarModelProps) {
+  spinDurationSeconds = 16,
+  characterScale = 1,
+  verticalOffset = 0,
+  variant = "studio",
+  movementState = "idle",
+  facingDirection = 0
+}: AvatarRigProps) {
   const rootRef = useRef<Group>(null);
+  const leftArmRef = useRef<Group>(null);
+  const rightArmRef = useRef<Group>(null);
+  const leftLegRef = useRef<Group>(null);
+  const rightLegRef = useRef<Group>(null);
   const flags = accessoryFlags(accessories);
   const hairStyle = hairVariant(hair);
   const outfitStyle = outfitVariant(clothes);
-  const embedded = variant === "embedded";
+  const isSceneAvatar = variant !== "studio";
+  const isPlaza = variant === "plaza";
 
   const palette = useMemo(
     () => ({
       skin: normalizeHexColor(skinColor) ?? "#d7a26c",
       skinShadow: shadeHexColor(skinColor, -24),
-      skinGlow: shadeHexColor(skinColor, 12),
       hair: normalizeHexColor(hairColor) ?? "#2ecf72",
       hairLight: shadeHexColor(hairColor, 18),
       hairShadow: shadeHexColor(hairColor, -28),
       clothes: normalizeHexColor(clothesColor) ?? "#4ab8ff",
-      clothesShadow: shadeHexColor(clothesColor, -32),
       clothesLight: shadeHexColor(clothesColor, 18),
       pants: shadeHexColor(clothesColor, -16),
       sole: "#edf3fb",
-      metal: "#d8e4f3",
       dark: "#243648",
-      blush: "#edb0ab",
       reward: "#f5ae28"
     }),
     [clothesColor, hairColor, skinColor]
@@ -167,16 +165,34 @@ function AvatarModel({
     }
 
     const elapsed = state.clock.getElapsedTime();
-    const cycle = (Math.PI * 2) / Math.max(spinDurationSeconds, 6);
-    const baseY = (embedded ? -1.26 : -1.18) + verticalOffset * 0.002;
-    const bobAmount = embedded ? 0.01 : 0.018;
-    rootRef.current.rotation.y = Math.sin(elapsed * cycle) * 0.34;
-    rootRef.current.rotation.x = Math.sin(elapsed * 0.7) * 0.02;
-    rootRef.current.position.set(0, baseY + Math.sin(elapsed * 1.2) * bobAmount, 0);
+    const walkPhase = elapsed * 8;
+    const isWalking = movementState === "walk";
+    const walkSwing = isWalking ? Math.sin(walkPhase) * 0.55 : 0;
+    const walkBob = isWalking ? Math.abs(Math.sin(walkPhase)) * (isPlaza ? 0.025 : 0.02) : 0;
+    const idleBob = !isWalking ? Math.sin(elapsed * 1.2) * (isSceneAvatar ? 0.01 : 0.018) : 0;
+    const baseY = (isPlaza ? 0.92 : isSceneAvatar ? -1.26 : -1.18) + verticalOffset * 0.002;
+
+    if (variant === "studio") {
+      const cycle = (Math.PI * 2) / Math.max(spinDurationSeconds, 6);
+      rootRef.current.rotation.y = Math.sin(elapsed * cycle) * 0.34;
+      rootRef.current.rotation.x = Math.sin(elapsed * 0.7) * 0.02;
+    } else {
+      rootRef.current.rotation.y = MathUtils.lerp(rootRef.current.rotation.y, facingDirection, 0.18);
+      rootRef.current.rotation.x = 0;
+    }
+
+    rootRef.current.position.set(0, baseY + idleBob + walkBob, 0);
+
+    if (leftArmRef.current && rightArmRef.current && leftLegRef.current && rightLegRef.current) {
+      leftArmRef.current.rotation.x = walkSwing;
+      rightArmRef.current.rotation.x = -walkSwing;
+      leftLegRef.current.rotation.x = -walkSwing * 0.7;
+      rightLegRef.current.rotation.x = walkSwing * 0.7;
+    }
   });
 
   return (
-    <group ref={rootRef} scale={Math.max(characterScale, 0.35) * 0.82} position={[0, embedded ? -1.26 : -1.18, 0]}>
+    <group ref={rootRef} scale={Math.max(characterScale, 0.35) * 0.82} position={[0, isPlaza ? 0.92 : isSceneAvatar ? -1.26 : -1.18, 0]}>
       <group>
         <mesh castShadow position={[0, 2.58, -0.1]} scale={[0.92, 0.54, 0.9]}>
           <sphereGeometry args={[0.72, 28, 24]} />
@@ -357,7 +373,7 @@ function AvatarModel({
         <meshStandardMaterial color={palette.pants} roughness={0.72} metalness={0.08} />
       </RoundedBox>
 
-      <group position={[-0.92, 0.84, 0]}>
+      <group ref={leftArmRef} position={[-0.92, 0.84, 0]}>
         <mesh castShadow position={[0.06, 0.56, 0]}>
           <sphereGeometry args={[0.21, 20, 18]} />
           <meshStandardMaterial color={palette.clothes} roughness={0.66} metalness={0.08} />
@@ -372,7 +388,7 @@ function AvatarModel({
         </mesh>
       </group>
 
-      <group position={[0.92, 0.84, 0]}>
+      <group ref={rightArmRef} position={[0.92, 0.84, 0]}>
         <mesh castShadow position={[-0.06, 0.56, 0]}>
           <sphereGeometry args={[0.21, 20, 18]} />
           <meshStandardMaterial color={palette.clothes} roughness={0.66} metalness={0.08} />
@@ -387,7 +403,7 @@ function AvatarModel({
         </mesh>
       </group>
 
-      <group position={[-0.34, -1.24, 0]}>
+      <group ref={leftLegRef} position={[-0.34, -1.24, 0]}>
         <mesh castShadow position={[0, 0.42, 0]}>
           <sphereGeometry args={[0.2, 20, 18]} />
           <meshStandardMaterial color={palette.pants} roughness={0.68} metalness={0.08} />
@@ -404,7 +420,7 @@ function AvatarModel({
         </RoundedBox>
       </group>
 
-      <group position={[0.34, -1.24, 0]}>
+      <group ref={rightLegRef} position={[0.34, -1.24, 0]}>
         <mesh castShadow position={[0, 0.42, 0]}>
           <sphereGeometry args={[0.2, 20, 18]} />
           <meshStandardMaterial color={palette.pants} roughness={0.68} metalness={0.08} />
@@ -450,72 +466,49 @@ function AvatarModel({
 
 export function AvatarPreview3D({
   nickname,
-  hair,
-  clothes,
-  accessories,
-  skinColor,
-  hairColor,
-  clothesColor,
   showCaption = true,
   spinDurationSeconds = 16,
   characterScale = 1,
   verticalOffset = 0,
-  variant = "studio"
+  variant = "studio",
+  movementState = "idle",
+  facingDirection = 0,
+  ...appearance
 }: AvatarPreview3DProps) {
   const embedded = variant === "embedded";
+  const plaza = variant === "plaza";
 
   return (
-    <div className={`avatar-stage avatar-stage-3d ${embedded ? "avatar-stage-embedded" : ""}`}>
-      <div className={`avatar-canvas-shell ${embedded ? "avatar-canvas-shell-embedded" : ""}`}>
+    <div className={`avatar-stage avatar-stage-3d ${embedded ? "avatar-stage-embedded" : ""} ${plaza ? "avatar-stage-plaza" : ""}`}>
+      <div className={`avatar-canvas-shell ${embedded ? "avatar-canvas-shell-embedded" : ""} ${plaza ? "avatar-canvas-shell-plaza" : ""}`}>
         <Canvas
           dpr={[1, 1.8]}
-          camera={embedded ? { position: [0, -0.12, 11.4], fov: 48 } : { position: [0, -0.02, 9.8], fov: 44 }}
+          camera={plaza ? { position: [0, -0.24, 12.6], fov: 42 } : embedded ? { position: [0, -0.12, 11.4], fov: 48 } : { position: [0, -0.02, 9.8], fov: 44 }}
           shadows
           gl={{ antialias: true, alpha: true }}
         >
-          {!embedded ? <fog attach="fog" args={["#dfeef2", 8, 14]} /> : null}
+          {!embedded && !plaza ? <fog attach="fog" args={["#dfeef2", 8, 14]} /> : null}
           <ambientLight intensity={1.4} />
           <hemisphereLight intensity={0.95} groundColor="#c2d6dd" color="#ffffff" />
-          <directionalLight
-            castShadow
-            position={[4.8, 7.2, 5.4]}
-            intensity={1.5}
-            shadow-mapSize-width={1024}
-            shadow-mapSize-height={1024}
-          />
+          <directionalLight castShadow position={[4.8, 7.2, 5.4]} intensity={1.5} shadow-mapSize-width={1024} shadow-mapSize-height={1024} />
           <directionalLight position={[-4, 3.5, -3.5]} intensity={0.4} color="#d6eef8" />
 
-          <AvatarModel
-            hair={hair}
-            clothes={clothes}
-            accessories={accessories}
-            skinColor={skinColor}
-            hairColor={hairColor}
-            clothesColor={clothesColor}
+          <AvatarRig
+            {...appearance}
             spinDurationSeconds={spinDurationSeconds}
             characterScale={characterScale}
             verticalOffset={verticalOffset}
             variant={variant}
+            movementState={movementState}
+            facingDirection={facingDirection}
           />
 
-          <ContactShadows
-            position={[0, embedded ? -2.36 : -2.28, 0]}
-            scale={embedded ? 3.5 : 4.3}
-            blur={2.2}
-            opacity={embedded ? 0.24 : 0.28}
-            far={4.6}
-          />
-          <OrbitControls
-            enablePan={false}
-            enableZoom={false}
-            target={embedded ? [0, -0.46, 0] : [0, -0.3, 0]}
-            minPolarAngle={1.2}
-            maxPolarAngle={1.76}
-          />
+          <ContactShadows position={[0, plaza ? -2.48 : embedded ? -2.36 : -2.28, 0]} scale={plaza ? 2.9 : embedded ? 3.5 : 4.3} blur={2.2} opacity={plaza ? 0.18 : embedded ? 0.24 : 0.28} far={4.6} />
+          {!embedded && !plaza ? <OrbitControls enablePan={false} enableZoom={false} target={[0, -0.3, 0]} minPolarAngle={1.2} maxPolarAngle={1.76} /> : null}
         </Canvas>
       </div>
 
-      {showCaption && !embedded ? (
+      {showCaption && !embedded && !plaza ? (
         <div className="avatar-preview-copy">
           <p className="avatar-preview-name">{nickname}</p>
           <p className="avatar-preview-meta">3D character preview</p>

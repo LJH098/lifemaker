@@ -79,8 +79,8 @@ export function Layout() {
           <div className="rounded-[30px] liquid-panel p-5">
             <div className="rounded-[28px] liquid-panel-soft p-4">
               <div className="flex items-start gap-3">
-                <div className="flex h-[156px] w-[112px] shrink-0 items-start justify-center overflow-visible rounded-[24px] bg-white/30 px-1 pt-3">
-                  <div className="mt-4 origin-top scale-[0.31]">
+                <div className="flex h-[180px] w-[138px] shrink-0 items-end justify-center overflow-hidden rounded-[24px] bg-white/30 px-2 pt-3">
+                  <div className="w-[144px]">
                     <AvatarPreview3D
                       nickname={user.nickname}
                       hair={user.avatar.hair}
@@ -91,6 +91,8 @@ export function Layout() {
                       clothesColor={user.avatar.colors.clothes}
                       showCaption={false}
                       spinDurationSeconds={28}
+                      characterScale={0.78}
+                      verticalOffset={0}
                       variant="embedded"
                     />
                   </div>

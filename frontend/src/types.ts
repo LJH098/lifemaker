@@ -96,6 +96,12 @@ export type ChatMessage = {
   avatarX?: number;
   avatarY?: number;
   avatarPalette?: string;
+  avatarHair?: string;
+  avatarClothes?: string;
+  avatarAccessories?: string[];
+  avatarSkinColor?: string;
+  avatarHairColor?: string;
+  avatarClothesColor?: string;
 };
 
 export type AuthPayload = {

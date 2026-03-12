@@ -1,5 +1,7 @@
 package com.lifemaker.model;
 
+import java.util.List;
+
 public class ChatMessage {
 
     private String roomId;
@@ -12,6 +14,12 @@ public class ChatMessage {
     private Double avatarX;
     private Double avatarY;
     private String avatarPalette;
+    private String avatarHair;
+    private String avatarClothes;
+    private List<String> avatarAccessories;
+    private String avatarSkinColor;
+    private String avatarHairColor;
+    private String avatarClothesColor;
 
     public String getRoomId() {
         return roomId;
@@ -91,5 +99,53 @@ public class ChatMessage {
 
     public void setAvatarPalette(String avatarPalette) {
         this.avatarPalette = avatarPalette;
+    }
+
+    public String getAvatarHair() {
+        return avatarHair;
+    }
+
+    public void setAvatarHair(String avatarHair) {
+        this.avatarHair = avatarHair;
+    }
+
+    public String getAvatarClothes() {
+        return avatarClothes;
+    }
+
+    public void setAvatarClothes(String avatarClothes) {
+        this.avatarClothes = avatarClothes;
+    }
+
+    public List<String> getAvatarAccessories() {
+        return avatarAccessories;
+    }
+
+    public void setAvatarAccessories(List<String> avatarAccessories) {
+        this.avatarAccessories = avatarAccessories;
+    }
+
+    public String getAvatarSkinColor() {
+        return avatarSkinColor;
+    }
+
+    public void setAvatarSkinColor(String avatarSkinColor) {
+        this.avatarSkinColor = avatarSkinColor;
+    }
+
+    public String getAvatarHairColor() {
+        return avatarHairColor;
+    }
+
+    public void setAvatarHairColor(String avatarHairColor) {
+        this.avatarHairColor = avatarHairColor;
+    }
+
+    public String getAvatarClothesColor() {
+        return avatarClothesColor;
+    }
+
+    public void setAvatarClothesColor(String avatarClothesColor) {
+        this.avatarClothesColor = avatarClothesColor;
     }
 }
